@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -5,6 +6,9 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.http import FileResponse, Http404
+from django.conf import settings
+from django.core.management import call_command
 from .models import ConferenceSubmission
 
 
@@ -113,7 +117,6 @@ def reupload_file(request, tracking_code):
 
     if request.method == 'POST' and request.FILES.get('file'):
         submission.file = request.FILES.get('file')
-        # إعادة توجيه الحالة للمرحلة المناسبة
         if submission.status == 'defective_file':
             submission.status = 'submitted'
             submission.manager_notes = 'تم تحديث وإعادة رفع الملف من قِبل الباحث.'
@@ -270,8 +273,25 @@ def scientific_action(request, pk):
     return redirect('scientific_portal')
 
 
+def serve_submission_file(request, filename):
+    """فتح وتحميل ملف البحث بصيغة PDF أو Word بأمان في الإنتاج"""
+    file_relative_path = os.path.join('submissions_files', filename)
+    file_path = os.path.join(settings.MEDIA_ROOT, file_relative_path)
+
+    if os.path.exists(file_path):
+        content_type = 'application/pdf' if filename.lower().endswith('.pdf') else 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        return FileResponse(open(file_path, 'rb'), content_type=content_type)
+    raise Http404("الملف المطلوب غير موجود على الخادم.")
+
+
 def setup_admin_users(request):
-    """إنشاء وتهيئة حسابات مدير المنصة ولجنة التحكيم للتجربة الفورية"""
+    """إنشاء جداول قاعدة البيانات وتجهيز حسابات مدير المنصة ولجنة التحكيم فوراً مجاناً"""
+    try:
+        call_command('makemigrations')
+        call_command('migrate')
+    except Exception as e:
+        print(f"Migration error: {e}")
+
     if not User.objects.filter(username='manager').exists():
         User.objects.create_user('manager', 'manager@albutana.edu.sd', '123', is_staff=True)
 
@@ -282,5 +302,5 @@ def setup_admin_users(request):
         User.objects.create_superuser('admin', 'admin@albutana.edu.sd', '123')
 
     return render(request, 'submissions/home.html', {
-        'message_success': '✓ تم تجهيز حسابات الاختبار: مدير المنصة (manager / 123) ولجنة التحكيم (scientific / 123) والمسؤول العام (admin / 123) بنجاح!'
+        'message_success': '✓ تم ترحيل وتأسيس جداول قاعدة البيانات وتجهيز الحسابات بنجاح: مدير المنصة (manager / 123) - الشؤون العلمية (scientific / 123) - المسؤول (admin / 123)'
     })
