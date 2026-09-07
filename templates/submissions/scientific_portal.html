@@ -1,14 +1,14 @@
 {% extends 'submissions/base.html' %}
 
-{% block title %}لوحة الشؤون العلمية - التحكيم والتقييم الأكاديمي{% endblock %}
+{% block title %}لوحة اللجنة العلمية - تحكيم وتقييم الأوراق البحثية{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 mt-4 mb-5">
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
         <div>
-            <h4 class="fw-bold text-dark mb-1"><i class="bi bi-award-fill text-warning"></i> لوحة تحكيم الشؤون العلمية واللجان الأكاديمية</h4>
-            <p class="text-muted small mb-0">تقييم الأوراق العلمية، وضع الدرجات، وإصدار قرارات القبول والاعتذار</p>
+            <h4 class="fw-bold text-dark mb-1"><i class="bi bi-award-fill text-warning"></i> لوحة تحكيم وقرارات اللجنة العلمية للمؤتمر</h4>
+            <p class="text-muted small mb-0">تقييم الأوراق العلمية، وضع الدرجات، وإصدار إفادات القبول والاعتذار الرسمية للباحثين</p>
         </div>
         <div>
             <a href="{% url 'manager_portal' %}" class="btn btn-outline-primary fw-bold btn-sm"><i class="bi bi-kanban"></i> لوحة فحص المدير</a>
@@ -19,8 +19,8 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-warning border-4">
-                <span class="text-muted small fw-bold">أوراق قيد التحكيم العلمي</span>
-                <h3 class="fw-bold text-warning mt-1">{{ under_review_count }}</h3>
+                <span class="text-muted small fw-bold">أوراق قيد تحكيم اللجنة العلمية</span>
+                <h3 class="fw-bold text-warning mt-1">{{ under_review_count }} ⏳</h3>
             </div>
         </div>
         <div class="col-md-3">
@@ -43,19 +43,19 @@
         </div>
     </div>
 
-    <!-- جدول الأوراق العلمية للتحكيم -->
+    <!-- جدول الأوراق العلمية -->
     <div class="card card-custom p-4">
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
                         <th>كود البحث</th>
-                        <th>الباحث والمؤسسة</th>
-                        <th>عنوان الورقة والمحور</th>
+                        <th>الباحث والجامعة</th>
+                        <th>عنوان الورقة والمجال</th>
                         <th>الملف</th>
                         <th>الدرجة</th>
                         <th>الحالة</th>
-                        <th>بطاقة التحكيم والقرار</th>
+                        <th>بطاقة تحكيم اللجنة العلمية</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,7 +64,7 @@
                             <td class="fw-bold text-primary">{{ sub.tracking_code }}</td>
                             <td>
                                 <strong>{{ sub.author_name }}</strong> ({{ sub.get_academic_degree_display }})<br>
-                                <span class="text-muted small">{{ sub.university }}</span>
+                                <span class="text-muted small">{{ sub.get_university_display }} — {{ sub.faculty }}</span>
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">{{ sub.title }}</div>
@@ -73,11 +73,11 @@
                             <td>
                                 {% if sub.is_pdf %}
                                     <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-file-earmark-pdf-fill"></i> فتح PDF
+                                        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
                                     </a>
                                 {% else %}
                                     <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-file-earmark-word-fill"></i> فتح Word
+                                        <i class="bi bi-file-earmark-word-fill"></i> Word
                                     </a>
                                 {% endif %}
                             </td>
@@ -99,51 +99,51 @@
                             </td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-gold px-3" data-bs-toggle="modal" data-bs-target="#reviewModal{{ sub.id }}">
-                                    <i class="bi bi-pencil-square"></i> التحكيم والتقييم
+                                    <i class="bi bi-pencil-square"></i> قرار اللجنة العلمية
                                 </button>
                             </td>
                         </tr>
 
-                        <!-- Modal بطاقة التحكيم الأكاديمي -->
+                        <!-- نافذة بطاقة التحكيم الأكاديمي مع النصوص الجاهزة -->
                         <div class="modal fade" id="reviewModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <form method="post" action="{% url 'scientific_action' sub.id %}">
                                         {% csrf_token %}
                                         <div class="modal-header bg-dark text-white">
-                                            <h6 class="modal-title fw-bold"><i class="bi bi-award text-warning me-1"></i> بطاقة التحكيم والتقييم العلمي: {{ sub.tracking_code }}</h6>
+                                            <h6 class="modal-title fw-bold"><i class="bi bi-award text-warning me-1"></i> بطاقة تحكيم وقرار اللجنة العلمية: {{ sub.tracking_code }}</h6>
                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="alert alert-light border small mb-3">
-                                                <strong>الباحث:</strong> {{ sub.author_name }} | <strong>الجامعة:</strong> {{ sub.university }}<br>
-                                                <strong>العنوان:</strong> {{ sub.title }}
+                                                <strong>الباحث:</strong> {{ sub.author_name }} | <strong>الجامعة:</strong> {{ sub.get_university_display }} ({{ sub.faculty }})<br>
+                                                <strong>عنوان البحث:</strong> {{ sub.title }}
                                             </div>
 
                                             <div class="row g-3">
                                                 <div class="col-md-6">
-                                                    <label class="form-label small fw-bold">القرار الأكاديمي النهائي *</label>
-                                                    <select name="decision" class="form-select" required>
+                                                    <label class="form-label small fw-bold">القرار الأكاديمي للجنة *</label>
+                                                    <select name="decision" id="decisionSelect{{ sub.id }}" class="form-select" onchange="updateTemplateText({{ sub.id }})" required>
                                                         <option value="accept" {% if sub.status == 'accepted' %}selected{% endif %}>🟢 قبول البحث للمشاركة في المؤتمر</option>
                                                         <option value="revise" {% if sub.status == 'revision_required' %}selected{% endif %}>🟡 قبول مشروط بإجراء تعديلات</option>
-                                                        <option value="reject" {% if sub.status == 'rejected' %}selected{% endif %}>🔴 اعتذار عن قبول البحث</option>
+                                                        <option value="reject" {% if sub.status == 'rejected' %}selected{% endif %}>🔴 اعتذار عن عدم قبول البحث</option>
                                                     </select>
                                                 </div>
 
                                                 <div class="col-md-6">
-                                                    <label class="form-label small fw-bold">الدرجة والتقييم العلمي (من 100):</label>
-                                                    <input type="number" name="scientific_score" value="{{ sub.scientific_score|default:'' }}" class="form-control" min="0" max="100" placeholder="مثال: 85">
+                                                    <label class="form-label small fw-bold">درجة التقييم والتحكيم (من 100):</label>
+                                                    <input type="number" name="scientific_score" value="{{ sub.scientific_score|default:'' }}" class="form-control" min="0" max="100" placeholder="مثال: 88">
                                                 </div>
 
                                                 <div class="col-12">
-                                                    <label class="form-label small fw-bold">تقرير وتوصيات الشؤون العلمية (تظهر للباحث في صفحة التتبع):</label>
-                                                    <textarea name="scientific_decision_notes" class="form-control" rows="4" placeholder="اكتب إفادة القبول أو التعديلات المطلوبة أو سبب الاعتذار...">{{ sub.scientific_decision_notes|default:"" }}</textarea>
+                                                    <label class="form-label small fw-bold">نص إفادة وتقرير اللجنة العلمية (تظهر للباحث ومدير المنصة):</label>
+                                                    <textarea name="scientific_decision_notes" id="notesText{{ sub.id }}" class="form-control" rows="4" placeholder="اكتب الإفادة أو اختر القرار ليتم توليد النص الرسمي تلقائياً...">{{ sub.scientific_decision_notes|default:"" }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إلغاء</button>
-                                            <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">اعتماد القرار العلمي</button>
+                                            <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">اعتماد وحفظ قرار اللجنة العلمية</button>
                                         </div>
                                     </form>
                                 </div>
@@ -152,7 +152,7 @@
 
                     {% empty %}
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-5">لا توجد مشاركات محالة للتحكيم العلمي حالياً.</td>
+                            <td colspan="7" class="text-center text-muted py-5">لا توجد أوراق بحثية محالة للجنة العلمية حالياً.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -161,4 +161,23 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// دالة لتوليد النص الرسمي تلقائياً حسب قرار اللجنة العلمية
+function updateTemplateText(id) {
+    var select = document.getElementById('decisionSelect' + id);
+    var textarea = document.getElementById('notesText' + id);
+    if (!select || !textarea) return;
+
+    if (select.value === 'accept') {
+        textarea.value = 'يسر اللجنة العلمية لمؤتمر جامعة البطانة وجامعات قطاع الوسط إفادتكم بقبول ورقتكم العلمية للمشاركة في فعاليات المؤتمر، متمنين لكم دوام التوفيق والتميز الأكاديمي.';
+    } else if (select.value === 'revise') {
+        textarea.value = 'توصي اللجنة العلمية بقبول الورقة البحثية شريطة إجراء بعض التعديلات المنهجية والأكاديمية، يرجى مراجعة الملاحظات وإعادة تسليم النسخة المعدلة عبر المنصة في أقرب وقت.';
+    } else if (select.value === 'reject') {
+        textarea.value = 'تعتذر اللجنة العلمية للمؤتمر عن عدم إمكانية قبول الورقة البحثية في هذه الدورة لعدم استيفائها المعايير والشروط، مع خالص شكرنا وتقديرنا لاهتمامكم ومشاركتكم.';
+    }
+}
+</script>
 {% endblock %}
