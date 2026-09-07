@@ -8,7 +8,7 @@
     
     <div class="card card-custom p-4 p-md-5">
         
-        <!-- ترويسة الاستمارة الرسمية بشعار جامعة البطانة -->
+        <!-- ترويسة الاستمارة الرسمية -->
         <div class="text-center mb-4 pb-3 border-bottom">
             <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الدولي - جامعة البطانة</span>
@@ -39,8 +39,8 @@
                     </div>
 
                     <!-- قائمة الجامعات المنسدلة -->
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-primary">🏛️ الجامعة / المؤسسة التابع لها *</label>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold text-primary">🏛️ الجامعة / المؤسسة الأكاديمية التابع لها *</label>
                         <select name="university" class="form-select border-primary fw-semibold" required>
                             {% for code, label in universities %}
                                 <option value="{{ code }}">{{ label }}</option>
@@ -48,9 +48,15 @@
                         </select>
                     </div>
 
+                    <!-- فصل الكلية عن القسم -->
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">الكلية والقسم التخصصي *</label>
-                        <input type="text" name="faculty_and_dept" class="form-control" required placeholder="مثال: كلية التربية - قسم المناهج">
+                        <label class="form-label small fw-bold">الكلية *</label>
+                        <input type="text" name="faculty" class="form-control" required placeholder="مثال: كلية التربية / كلية الهندسة">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">القسم الأكاديمي *</label>
+                        <input type="text" name="department" class="form-control" required placeholder="مثال: قسم المناهج / قسم الكهرباء">
                     </div>
 
                     <div class="col-md-6">
@@ -67,11 +73,12 @@
 
             <!-- 2. بيانات المشاركة والورقة العلمية -->
             <div class="p-3 bg-light rounded-3 border mb-4">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمحور الأكاديمي</h5>
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمجال الأكاديمي</h5>
 
                 <div class="row g-3">
+                    <!-- المجالات الـ 5 المعتمدة فقط -->
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">المجال والقطاع الأكاديمي العام *</label>
+                        <label class="form-label small fw-bold">المجال والقطاع الأكاديمي *</label>
                         <select name="academic_domain" class="form-select" required>
                             {% for code, label in academic_domains %}
                                 <option value="{{ code }}">{{ label }}</option>
@@ -89,18 +96,8 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label small fw-bold">المحور التخصصي الدقيق للبحث *</label>
-                        <input type="text" name="research_track" class="form-control" required placeholder="مثال: تطوير التعليم الإلكتروني / الأمراض المتوطنة...">
-                    </div>
-
-                    <div class="col-12">
                         <label class="form-label small fw-bold">عنوان البحث أو المشروع العلمي كاملاً *</label>
                         <input type="text" name="title" class="form-control" required placeholder="أدخل العنوان الأكاديمي الدقيق للورقة العلمية">
-                    </div>
-
-                    <div class="col-12">
-                        <label class="form-label small fw-bold">ملخص البحث (Abstract) - اختياري</label>
-                        <textarea name="abstract" class="form-control" rows="4" placeholder="اكتب ملخصاً قصيراً لأهداف البحث وأبرز نتائجه..."></textarea>
                     </div>
                 </div>
             </div>
