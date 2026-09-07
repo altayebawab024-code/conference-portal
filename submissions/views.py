@@ -23,16 +23,17 @@ def public_home(request):
         'accepted_submissions': accepted_submissions,
         'domains_count': domains_count,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
+        'universities': ConferenceSubmission.UNIVERSITIES,
     }
     return render(request, 'submissions/home.html', context)
 
 
 def submit_paper(request):
-    """استمارة التقديم العامة المفتوحة للباحثين بدون تسجيل دخول"""
+    """استمارة التقديم العامة المفتوحة للباحثين بقوائم منسدلة"""
     if request.method == 'POST':
         author_name = request.POST.get('author_name', '').strip()
         academic_degree = request.POST.get('academic_degree')
-        university = request.POST.get('university', '').strip()
+        university = request.POST.get('university')
         faculty_and_dept = request.POST.get('faculty_and_dept', '').strip()
         email = request.POST.get('email', '').strip()
         phone = request.POST.get('phone', '').strip()
@@ -73,6 +74,7 @@ def submit_paper(request):
             return redirect('submit_paper')
 
     context = {
+        'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'academic_degrees': ConferenceSubmission.ACADEMIC_DEGREES,
         'participation_types': ConferenceSubmission.PARTICIPATION_TYPES,
@@ -81,13 +83,11 @@ def submit_paper(request):
 
 
 def submission_success(request, tracking_code):
-    """صفحة إشعار الاستلام الأكاديمي المروّس والقابل للطباعة"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
     return render(request, 'submissions/success.html', {'submission': submission})
 
 
 def track_submission(request):
-    """بوابة التتبع الحي لحالة المشاركة للباحث بكود التتبع أو الهاتف"""
     search_query = request.GET.get('q', '').strip()
     submission = None
 
@@ -108,7 +108,6 @@ def track_submission(request):
 
 
 def reupload_file(request, tracking_code):
-    """إعادة رفع الملف المصحح للباحث إذا طُلب منه تعديل أو كان الملف تالفاً"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
 
     if submission.status not in ['defective_file', 'revision_required']:
@@ -136,9 +135,9 @@ def reupload_file(request, tracking_code):
 
 @login_required
 def manager_portal(request):
-    """لوحة تحكم مدير المنصة (الفحص الإداري وسلامة الملفات)"""
     status_filter = request.GET.get('status', '')
     domain_filter = request.GET.get('domain', '')
+    university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
     submissions = ConferenceSubmission.objects.all()
@@ -147,12 +146,13 @@ def manager_portal(request):
         submissions = submissions.filter(status=status_filter)
     if domain_filter:
         submissions = submissions.filter(academic_domain=domain_filter)
+    if university_filter:
+        submissions = submissions.filter(university=university_filter)
     if search_query:
         submissions = submissions.filter(
             Q(tracking_code__icontains=search_query) |
             Q(author_name__icontains=search_query) |
-            Q(title__icontains=search_query) |
-            Q(university__icontains=search_query)
+            Q(title__icontains=search_query)
         )
 
     pending_count = ConferenceSubmission.objects.filter(status='submitted').count()
@@ -164,10 +164,12 @@ def manager_portal(request):
         'pending_count': pending_count,
         'defective_count': defective_count,
         'forwarded_count': forwarded_count,
+        'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'submission_statuses': ConferenceSubmission.SUBMISSION_STATUS,
         'status_filter': status_filter,
         'domain_filter': domain_filter,
+        'university_filter': university_filter,
         'search_query': search_query,
     }
     return render(request, 'submissions/manager_portal.html', context)
@@ -175,7 +177,6 @@ def manager_portal(request):
 
 @login_required
 def manager_action(request, pk):
-    """اتخاذ إجراء إداري من مدير المنصة (إحالة للشؤون العلمية أو تنبيه بملف تالف)"""
     submission = get_object_or_404(ConferenceSubmission, pk=pk)
 
     if request.method == 'POST':
@@ -200,9 +201,9 @@ def manager_action(request, pk):
 
 @login_required
 def scientific_portal(request):
-    """لوحة تحكم الشؤون العلمية ولجنة التحكيم (التحكيم والتقييم بالدرجات)"""
     domain_filter = request.GET.get('domain', '')
     status_filter = request.GET.get('status', '')
+    university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
     submissions = ConferenceSubmission.objects.exclude(status__in=['submitted', 'defective_file'])
@@ -211,6 +212,8 @@ def scientific_portal(request):
         submissions = submissions.filter(academic_domain=domain_filter)
     if status_filter:
         submissions = submissions.filter(status=status_filter)
+    if university_filter:
+        submissions = submissions.filter(university=university_filter)
     if search_query:
         submissions = submissions.filter(
             Q(tracking_code__icontains=search_query) |
@@ -229,10 +232,12 @@ def scientific_portal(request):
         'accepted_count': accepted_count,
         'revision_count': revision_count,
         'rejected_count': rejected_count,
+        'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'submission_statuses': ConferenceSubmission.SUBMISSION_STATUS,
         'domain_filter': domain_filter,
         'status_filter': status_filter,
+        'university_filter': university_filter,
         'search_query': search_query,
     }
     return render(request, 'submissions/scientific_portal.html', context)
@@ -240,7 +245,6 @@ def scientific_portal(request):
 
 @login_required
 def scientific_action(request, pk):
-    """قرار التحكيم الأكاديمي من الشؤون العلمية (قبول / طلب تعديل / اعتذار)"""
     submission = get_object_or_404(ConferenceSubmission, pk=pk)
 
     if request.method == 'POST':
@@ -274,7 +278,6 @@ def scientific_action(request, pk):
 
 
 def serve_submission_file(request, filename):
-    """فتح وتحميل ملف البحث بصيغة PDF أو Word بأمان في الإنتاج"""
     file_relative_path = os.path.join('submissions_files', filename)
     file_path = os.path.join(settings.MEDIA_ROOT, file_relative_path)
 
@@ -285,7 +288,6 @@ def serve_submission_file(request, filename):
 
 
 def setup_admin_users(request):
-    """إنشاء جداول قاعدة البيانات وتجهيز حسابات مدير المنصة ولجنة التحكيم فوراً مجاناً"""
     try:
         call_command('makemigrations')
         call_command('migrate')
