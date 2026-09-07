@@ -1,17 +1,17 @@
 {% extends 'submissions/base.html' %}
 
-{% block title %}لوحة مدير المنصة - فحص المشاركات{% endblock %}
+{% block title %}لوحة مدير المنصة - فحص ومتابعة المشاركات{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 mt-4 mb-5">
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
         <div>
-            <h4 class="fw-bold text-primary mb-1"><i class="bi bi-kanban-fill"></i> لوحة تحكم مدير المنصة (الفحص الإداري)</h4>
-            <p class="text-muted small mb-0">مراجعة سلامة ملفات الأبحاث الواردة وإحالتها للشؤون العلمية</p>
+            <h4 class="fw-bold text-primary mb-1"><i class="bi bi-kanban-fill"></i> لوحة تحكم مدير المنصة (الفحص الإداري والمتابعة)</h4>
+            <p class="text-muted small mb-0">مراجعة ملفات الأبحاث الواردة، إحالتها للجنة العلمية، ومتابعة القرارات الصادرة</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{% url 'scientific_portal' %}" class="btn btn-outline-warning fw-bold btn-sm"><i class="bi bi-award-fill"></i> الانتقال للتحكيم العلمي</a>
+            <a href="{% url 'scientific_portal' %}" class="btn btn-outline-warning fw-bold btn-sm"><i class="bi bi-award-fill"></i> لوحة تحكيم اللجنة العلمية</a>
         </div>
     </div>
 
@@ -19,7 +19,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card card-custom p-3 border-start border-warning border-4">
-                <span class="text-muted small fw-bold">أبحاث واردة جديدة بانتظار الفحص</span>
+                <span class="text-muted small fw-bold">أبحاث جديدة بانتظار الفحص الإداري</span>
                 <h3 class="fw-bold text-warning mt-1">{{ pending_count }} ⏳</h3>
             </div>
         </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-4">
             <div class="card card-custom p-3 border-start border-success border-4">
-                <span class="text-muted small fw-bold">أبحاث تم تدقيقها وإحالتها للتحكيم</span>
+                <span class="text-muted small fw-bold">أبحاث محالة أو محسومة من اللجنة العلمية</span>
                 <h3 class="fw-bold text-success mt-1">{{ forwarded_count }} ✓</h3>
             </div>
         </div>
@@ -45,9 +45,9 @@
                 <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-sm" placeholder="ابحث بالكود، اسم الباحث، الجامعة...">
             </div>
             <div class="col-md-3">
-                <label class="form-label small fw-bold">القطاع الأكاديمي</label>
+                <label class="form-label small fw-bold">المجال العلمي</label>
                 <select name="domain" class="form-select form-select-sm">
-                    <option value="">جميع القطاعات</option>
+                    <option value="">جميع المجالات</option>
                     {% for code, label in academic_domains %}
                         <option value="{{ code }}" {% if domain_filter == code %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
@@ -76,9 +76,10 @@
                     <tr>
                         <th>كود التتبع</th>
                         <th>الباحث والجامعة</th>
-                        <th>عنوان البحث والمجال</th>
+                        <th>عنوان البحث</th>
                         <th>الملف</th>
-                        <th>الحالة</th>
+                        <th>حالة الطلب</th>
+                        <th>قرار وتقرير اللجنة العلمية</th>
                         <th>إجراء المدير</th>
                     </tr>
                 </thead>
@@ -88,10 +89,10 @@
                             <td class="fw-bold text-primary">{{ sub.tracking_code }}</td>
                             <td>
                                 <strong>{{ sub.author_name }}</strong><br>
-                                <span class="text-muted small">{{ sub.university }}</span>
+                                <span class="text-muted small">{{ sub.get_university_display }} — {{ sub.faculty }}</span>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark">{{ sub.title|truncatechars:50 }}</div>
+                                <div class="fw-bold text-dark">{{ sub.title|truncatechars:45 }}</div>
                                 <span class="badge bg-light text-dark border small">{{ sub.get_academic_domain_display }}</span>
                             </td>
                             <td>
@@ -110,13 +111,25 @@
                                     {% if sub.status == 'submitted' %}bg-warning text-dark
                                     {% elif sub.status == 'defective_file' %}bg-danger
                                     {% elif sub.status == 'accepted' %}bg-success
+                                    {% elif sub.status == 'rejected' %}bg-danger
+                                    {% elif sub.status == 'revision_required' %}bg-warning text-dark
                                     {% else %}bg-info text-dark{% endif %}">
                                     {{ sub.get_status_display }}
                                 </span>
                             </td>
                             <td>
+                                {% if sub.scientific_decision_notes %}
+                                    <small class="d-block text-dark fw-semibold">{{ sub.scientific_decision_notes|truncatechars:55 }}</small>
+                                    {% if sub.scientific_score %}
+                                        <span class="badge bg-dark small">الدرجة: {{ sub.scientific_score }}/100</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted small">بانتظار قرار اللجنة</span>
+                                {% endif %}
+                            </td>
+                            <td>
                                 <button type="button" class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#actionModal{{ sub.id }}">
-                                    اتخاذ إجراء
+                                    فحص إداري
                                 </button>
                             </td>
                         </tr>
@@ -137,19 +150,19 @@
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold">القرار الإداري:</label>
                                                 <select name="action" class="form-select" required>
-                                                    <option value="forward">✓ الملف سليم ومقروء (إحالة إلى الشؤون العلمية)</option>
+                                                    <option value="forward">✓ الملف سليم ومقروء (إحالة إلى اللجنة العلمية)</option>
                                                     <option value="defective">⚠️ الملف تالف أو فارغ (طلب إعادة الرفع من الباحث)</option>
                                                 </select>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label small fw-bold">ملاحظات توضيحية للباحث أو المحكمين:</label>
-                                                <textarea name="manager_notes" class="form-control" rows="3" placeholder="اكتب ملاحظاتك هنا...">{{ sub.manager_notes|default:"" }}</textarea>
+                                                <label class="form-label small fw-bold">ملاحظات إدارية:</label>
+                                                <textarea name="manager_notes" class="form-control" rows="3" placeholder="اكتب أي ملاحظة للباحث أو اللجنة العلمية...">{{ sub.manager_notes|default:"" }}</textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إلغاء</button>
-                                            <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">حفظ وإرسال</button>
+                                            <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">حفظ وإحالة</button>
                                         </div>
                                     </form>
                                 </div>
@@ -158,7 +171,7 @@
 
                     {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-5">لا توجد مشاركات مطابقة حالياً.</td>
+                            <td colspan="7" class="text-center text-muted py-5">لا توجد مشاركات مطابقة حالياً.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
