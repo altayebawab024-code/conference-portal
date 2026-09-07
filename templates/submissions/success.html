@@ -69,16 +69,20 @@
                 <td class="fw-bold text-dark">{{ submission.author_name }} ({{ submission.get_academic_degree_display }})</td>
             </tr>
             <tr>
-                <th class="table-light">الجامعة والمؤسسة</th>
-                <td class="fw-bold text-primary">{{ submission.get_university_display }} — {{ submission.faculty_and_dept }}</td>
+                <th class="table-light">الجامعة</th>
+                <td class="fw-bold text-primary">{{ submission.get_university_display }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">الكلية والقسم</th>
+                <td>{{ submission.faculty }} — {{ submission.department }}</td>
             </tr>
             <tr>
                 <th class="table-light">عنوان البحث</th>
                 <td class="fw-bold text-dark">{{ submission.title }}</td>
             </tr>
             <tr>
-                <th class="table-light">القطاع الأكاديمي</th>
-                <td>{{ submission.get_academic_domain_display }} ({{ submission.research_track }})</td>
+                <th class="table-light">المجال العلمي</th>
+                <td>{{ submission.get_academic_domain_display }}</td>
             </tr>
             <tr>
                 <th class="table-light">نوع المشاركة</th>
