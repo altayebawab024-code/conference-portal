@@ -19,7 +19,7 @@
     }
     .receipt-box {
         background-color: #ffffff;
-        border: 3px double #134074;
+        border: 3px double #10375c;
         border-radius: 12px;
         padding: 40px;
     }
@@ -37,35 +37,45 @@
         <p class="text-muted small">احفظ كود التتبع أدناه لمتابعة حالة بحثك في أي وقت</p>
     </div>
 
-    <!-- الإشعار الأكاديمي المروّس والقابل للطباعة -->
+    <!-- الإشعار الأكاديمي المروّس -->
     <div class="receipt-box shadow mb-4">
         
-        <!-- ترويسة جامعة البطانة -->
         <div class="text-center pb-3 border-bottom border-2 border-dark mb-4">
-            <h5 class="fw-bold text-dark mb-1">جمهورية السودان - جامعة البطانة</h5>
-            <h6 class="fw-bold text-primary mb-1">أمانة الشؤون العلمية ولجنة تنظيم المؤتمرات</h6>
-            <span class="badge bg-dark text-white px-3 py-1 mt-1">إشعار استلام رسمي ومعتمد لمشاركة بحثية</span>
+            <div class="d-flex justify-content-between align-items-center px-3 mb-2">
+                <div class="text-start small fw-bold">
+                    جمهورية السودان<br>
+                    وزارة التعليم العالي والبحث العلمي<br>
+                    <strong>جامعة البطانة</strong>
+                </div>
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary text-warning rounded-circle shadow" style="width: 60px; height: 60px; border: 2px solid #d4af37;">
+                    <i class="bi bi-mortarboard-fill fs-2"></i>
+                </div>
+                <div class="text-end small fw-bold">
+                    المؤتمر العلمي الدولي الشامل<br>
+                    ملتقى جامعات قطاع الوسط<br>
+                    أمانة الشؤون العلمية
+                </div>
+            </div>
+            <span class="badge bg-dark text-white px-4 py-2 mt-1 fs-6">إشعار استلام رسمي ومعتمد لمشاركة بحثية</span>
         </div>
 
-        <!-- كود التتبع البارز -->
         <div class="alert alert-warning border border-warning text-center py-3 mb-4">
             <span class="text-muted small fw-bold d-block mb-1">كود التتبع والمتابعة الخاص بالباحث:</span>
             <h2 class="fw-bold text-dark mb-0 letter-spacing-1">{{ submission.tracking_code }}</h2>
         </div>
 
-        <!-- جدول تفاصيل المشاركة -->
         <table class="table table-bordered align-middle small mb-4">
             <tr>
                 <th class="table-light w-25">اسم الباحث</th>
                 <td class="fw-bold text-dark">{{ submission.author_name }} ({{ submission.get_academic_degree_display }})</td>
             </tr>
             <tr>
-                <th class="table-light">الجامعة / المؤسسة</th>
-                <td>{{ submission.university }} - {{ submission.faculty_and_dept }}</td>
+                <th class="table-light">الجامعة والمؤسسة</th>
+                <td class="fw-bold text-primary">{{ submission.get_university_display }} — {{ submission.faculty_and_dept }}</td>
             </tr>
             <tr>
                 <th class="table-light">عنوان البحث</th>
-                <td class="fw-bold text-primary">{{ submission.title }}</td>
+                <td class="fw-bold text-dark">{{ submission.title }}</td>
             </tr>
             <tr>
                 <th class="table-light">القطاع الأكاديمي</th>
@@ -85,10 +95,9 @@
             </tr>
         </table>
 
-        <!-- الختم الإلكتروني -->
         <div class="d-flex justify-content-between align-items-end pt-3 border-top">
             <div class="small text-muted">
-                <em>صدر آلياً عبر بوابة المؤتمرات العلمية لجامعة البطانة</em>
+                <em>صدر آلياً عبر بوابة المؤتمر العلمي لجامعة البطانة</em>
             </div>
             <div class="text-center">
                 <div class="text-success fw-bold small mb-1">✓ الختم الإلكتروني معتمد</div>
@@ -98,7 +107,6 @@
 
     </div>
 
-    <!-- أزرار التحكم -->
     <div class="d-flex flex-wrap justify-content-center gap-3 no-print">
         <button onclick="window.print()" class="btn btn-dark btn-lg px-4">
             <i class="bi bi-printer-fill me-2"></i> طباعة إشعار الاستلام
