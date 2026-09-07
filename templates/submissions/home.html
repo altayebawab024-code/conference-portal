@@ -1,6 +1,7 @@
 {% extends 'submissions/base.html' %}
+{% load static %}
 
-{% block title %}الرئيسية - بوابة المؤتمرات العلمية جامعة البطانة{% endblock %}
+{% block title %}الرئيسية - المؤتمر العلمي الدولي جامعة البطانة{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -12,12 +13,14 @@
     {% endif %}
 
     <!-- Hero Header -->
-    <div class="card card-custom p-5 mb-4 text-white text-center" style="background: linear-gradient(135deg, #0b2545 0%, #134074 70%, #001f54 100%);">
+    <div class="card card-custom p-5 mb-4 text-white text-center" style="background: linear-gradient(135deg, #091e3a 0%, #10375c 70%, #001f54 100%);">
         <div class="py-3">
-            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-3 fs-6">المؤتمر العلمي الدولي الشامل 2026</span>
+            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-3 rounded-circle p-1 bg-white shadow" style="width: 90px; height: 90px; object-fit: contain;">
+            <br>
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-3 fs-6">المؤتمر العلمي الدولي الشامل • قطاع الوسط</span>
             <h1 class="display-6 fw-bold mb-3">بوابة استقبال وتحكيم الأوراق والمشاريع العلمية</h1>
             <p class="lead text-light mb-4 mx-auto" style="max-width: 800px;">
-                مرحباً بجميع الباحثين والأساتذة وطلاب الدراسات العليا من كافة الجامعات والمراكز البحثية للمشاركة في مؤتمر جامعة البطانة بمختلف التخصصات الطبية، والتربوية، والتقنية، والهندسية، والاقتصادية، والإنسانية.
+                مرحباً بجميع الباحثين وأعضاء هيئة التدريس وطلاب الدراسات العليا بجامعات قطاع الوسط للمشاركة في فعاليات مؤتمر جامعة البطانة.
             </p>
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 <a href="{% url 'submit_paper' %}" class="btn btn-gold btn-lg px-4 py-3 shadow">
@@ -47,56 +50,56 @@
         <div class="col-md-4">
             <div class="card card-custom p-4 border-bottom border-warning border-4">
                 <h2 class="fw-bold text-warning mb-1">{{ domains_count }}</h2>
-                <span class="text-muted fw-bold small">محاور وقطاعات علمية مستهدفة</span>
+                <span class="text-muted fw-bold small">المجالات والقطاعات العلمية</span>
             </div>
         </div>
     </div>
 
-    <!-- المجالات والتخصصات المستهدفة -->
+    <!-- المجالات العلمية الـ 5 المعتمدة -->
     <div class="card card-custom p-4 mb-4">
-        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المحاور والقطاعات العلمية المشاركة بالمؤتمر</h4>
-        <div class="row g-3">
+        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المجالات العلمية المعتمدة بالمؤتمر</h4>
+        <div class="row g-3 justify-content-center">
             {% for code, label in academic_domains %}
-                <div class="col-md-6 col-lg-3">
-                    <div class="p-3 bg-light rounded-3 border h-100 d-flex align-items-center">
-                        <span class="fw-bold small text-dark">{{ label }}</span>
+                <div class="col-md-4 col-lg">
+                    <div class="p-3 bg-light rounded-3 border h-100 text-center shadow-sm">
+                        <span class="fw-bold fs-6 text-dark">{{ label }}</span>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
 
-    <!-- خطوات التقديم والتحكيم -->
+    <!-- دورة التقييم -->
     <div class="card card-custom p-4">
-        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-bezier2 text-primary"></i> دورة وسير عمل تقييم الأوراق العلمية</h4>
+        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-bezier2 text-primary"></i> مسار تقييم وتحكيم الأوراق العلمية</h4>
         <div class="row text-center g-4">
             <div class="col-md-3">
                 <div class="avatar bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
                     <i class="bi bi-file-earmark-plus-fill fs-3"></i>
                 </div>
-                <h6 class="fw-bold mb-1">1. التقديم بدون تعقيد</h6>
-                <p class="small text-muted mb-0">رفع البحث بصيغة Word أو PDF بدون الحاجة لكلمة مرور.</p>
+                <h6 class="fw-bold mb-1">1. التقديم الأكاديمي</h6>
+                <p class="small text-muted mb-0">رفع البحث بصيغة Word أو PDF بدون الحاجة لحساب مسبق.</p>
             </div>
             <div class="col-md-3">
                 <div class="avatar bg-warning text-dark rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
                     <i class="bi bi-shield-check fs-3"></i>
                 </div>
                 <h6 class="fw-bold mb-1">2. الفحص الإداري</h6>
-                <p class="small text-muted mb-0">فحص سلامة الملف ومطابقته للشروط من مدير المنصة.</p>
+                <p class="small text-muted mb-0">التدقيق الإداري وفحص سلامة الملفات ومطابقتها للشروط.</p>
             </div>
             <div class="col-md-3">
                 <div class="avatar bg-info text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
                     <i class="bi bi-award-fill fs-3"></i>
                 </div>
-                <h6 class="fw-bold mb-1">3. التحكيم الأكاديمي</h6>
-                <p class="small text-muted mb-0">تقييم أصالة البحث ومنهجيته بواسطة لجان الشؤون العلمية.</p>
+                <h6 class="fw-bold mb-1">3. التحكيم العلمي</h6>
+                <p class="small text-muted mb-0">تقييم الأوراق بواسطة لجان التحكيم والشؤون العلمية.</p>
             </div>
             <div class="col-md-3">
                 <div class="avatar bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
                     <i class="bi bi-check-circle-fill fs-3"></i>
                 </div>
-                <h6 class="fw-bold mb-1">4. القبول والمشاركة</h6>
-                <p class="small text-muted mb-0">إشعار الباحث بالقبول وتقديم بحثه في جلسات المؤتمر.</p>
+                <h6 class="fw-bold mb-1">4. القبول والاعتماد</h6>
+                <p class="small text-muted mb-0">إشعار الباحث واعتماد بحثه للعرض في جلسات المؤتمر.</p>
             </div>
         </div>
     </div>
