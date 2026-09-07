@@ -13,7 +13,7 @@ from .models import ConferenceSubmission
 
 
 def public_home(request):
-    """الصفحة الرئيسية الترحيبية للمؤتمر والمنصة"""
+    """الصفحة الرئيسية الترحيبية للمؤتمر"""
     total_submissions = ConferenceSubmission.objects.count()
     accepted_submissions = ConferenceSubmission.objects.filter(status='accepted').count()
     domains_count = len(ConferenceSubmission.ACADEMIC_DOMAINS)
@@ -29,23 +29,22 @@ def public_home(request):
 
 
 def submit_paper(request):
-    """استمارة التقديم العامة المفتوحة للباحثين بقوائم منسدلة"""
+    """استمارة التقديم العامة المفتوحة للباحثين"""
     if request.method == 'POST':
         author_name = request.POST.get('author_name', '').strip()
         academic_degree = request.POST.get('academic_degree')
         university = request.POST.get('university')
-        faculty_and_dept = request.POST.get('faculty_and_dept', '').strip()
+        faculty = request.POST.get('faculty', '').strip()
+        department = request.POST.get('department', '').strip()
         email = request.POST.get('email', '').strip()
         phone = request.POST.get('phone', '').strip()
 
         academic_domain = request.POST.get('academic_domain')
-        research_track = request.POST.get('research_track', '').strip()
         participation_type = request.POST.get('participation_type')
         title = request.POST.get('title', '').strip()
-        abstract = request.POST.get('abstract', '').strip()
         uploaded_file = request.FILES.get('file')
 
-        if not all([author_name, academic_degree, university, email, phone, academic_domain, research_track, participation_type, title, uploaded_file]):
+        if not all([author_name, academic_degree, university, faculty, department, email, phone, academic_domain, participation_type, title, uploaded_file]):
             messages.error(request, 'يرجى تعبئة جميع الحقول المطلوبة وإرفاق ملف البحث.')
             return redirect('submit_paper')
 
@@ -53,14 +52,13 @@ def submit_paper(request):
             author_name=author_name,
             academic_degree=academic_degree,
             university=university,
-            faculty_and_dept=faculty_and_dept,
+            faculty=faculty,
+            department=department,
             email=email,
             phone=phone,
             academic_domain=academic_domain,
-            research_track=research_track,
             participation_type=participation_type,
             title=title,
-            abstract=abstract,
             file=uploaded_file,
             status='submitted',
         )
