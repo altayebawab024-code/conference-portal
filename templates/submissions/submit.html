@@ -1,4 +1,5 @@
 {% extends 'submissions/base.html' %}
+{% load static %}
 
 {% block title %}استمارة تقديم ورقة / مشاركة علمية{% endblock %}
 
@@ -7,11 +8,9 @@
     
     <div class="card card-custom p-4 p-md-5">
         
-        <!-- ترويسة الاستمارة الرسمية -->
+        <!-- ترويسة الاستمارة الرسمية بشعار جامعة البطانة -->
         <div class="text-center mb-4 pb-3 border-bottom">
-            <div class="d-inline-flex align-items-center justify-content-center bg-primary text-warning rounded-circle mb-3 shadow" style="width: 75px; height: 75px; border: 3px solid #d4af37;">
-                <i class="bi bi-mortarboard-fill fs-1"></i>
-            </div>
+            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الدولي - جامعة البطانة</span>
             <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / مشاركة علمية</h3>
             <p class="text-muted small">مخصصة للباحثين وأعضاء هيئة التدريس بجامعات قطاع الوسط</p>
@@ -41,7 +40,7 @@
 
                     <!-- قائمة الجامعات المنسدلة -->
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-primary">🏛️ الجامعة / المؤسسة الأكاديمية التابع لها *</label>
+                        <label class="form-label small fw-bold text-primary">🏛️ الجامعة / المؤسسة التابع لها *</label>
                         <select name="university" class="form-select border-primary fw-semibold" required>
                             {% for code, label in universities %}
                                 <option value="{{ code }}">{{ label }}</option>
