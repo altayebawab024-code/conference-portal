@@ -8,18 +8,16 @@
     
     <div class="card card-custom p-4 p-md-5">
         
-        <!-- ترويسة الاستمارة الرسمية -->
         <div class="text-center mb-4 pb-3 border-bottom">
             <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
-            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الدولي - جامعة البطانة</span>
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">مؤتمر جامعة البطانة العلمي - ملتقى جامعات قطاع الوسط</span>
             <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / مشاركة علمية</h3>
-            <p class="text-muted small">مخصصة للباحثين وأعضاء هيئة التدريس بجامعات قطاع الوسط</p>
+            <p class="text-muted small">مخصصة للباحثين واعضاء هيئة التدريس بجامعات قطاع الوسط</p>
         </div>
 
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <!-- 1. بيانات الباحث -->
             <div class="p-3 bg-light rounded-3 border mb-4">
                 <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-badge-fill text-primary"></i> 1. بيانات الباحث والمؤلف الرئيسي</h5>
                 
@@ -38,9 +36,8 @@
                         </select>
                     </div>
 
-                    <!-- قائمة الجامعات المنسدلة -->
                     <div class="col-12">
-                        <label class="form-label small fw-bold text-primary">🏛️ الجامعة / المؤسسة الأكاديمية التابع لها *</label>
+                        <label class="form-label small fw-bold text-primary">الجامعة / المؤسسة الاكاديمية التابع لها *</label>
                         <select name="university" class="form-select border-primary fw-semibold" required>
                             {% for code, label in universities %}
                                 <option value="{{ code }}">{{ label }}</option>
@@ -48,19 +45,18 @@
                         </select>
                     </div>
 
-                    <!-- فصل الكلية عن القسم -->
                     <div class="col-md-6">
                         <label class="form-label small fw-bold">الكلية *</label>
                         <input type="text" name="faculty" class="form-control" required placeholder="مثال: كلية التربية / كلية الهندسة">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">القسم الأكاديمي *</label>
-                        <input type="text" name="department" class="form-control" required placeholder="مثال: قسم المناهج / قسم الكهرباء">
+                        <label class="form-label small fw-bold">القسم الاكاديمي *</label>
+                        <input type="text" name="department" class="form-control" required placeholder="مثال: قسم المناهج / قسم الفيزياء">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">البريد الإلكتروني للباحث *</label>
+                        <label class="form-label small fw-bold">البريد الالكتروني للباحث *</label>
                         <input type="email" name="email" class="form-control" required placeholder="name@example.com">
                     </div>
 
@@ -71,14 +67,12 @@
                 </div>
             </div>
 
-            <!-- 2. بيانات المشاركة والورقة العلمية -->
             <div class="p-3 bg-light rounded-3 border mb-4">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمجال الأكاديمي</h5>
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمجال الاكاديمي</h5>
 
                 <div class="row g-3">
-                    <!-- المجالات الـ 5 المعتمدة فقط -->
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">المجال والقطاع الأكاديمي *</label>
+                        <label class="form-label small fw-bold">المجال العلمي *</label>
                         <select name="academic_domain" class="form-select" required>
                             {% for code, label in academic_domains %}
                                 <option value="{{ code }}">{{ label }}</option>
@@ -96,17 +90,16 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label small fw-bold">عنوان البحث أو المشروع العلمي كاملاً *</label>
-                        <input type="text" name="title" class="form-control" required placeholder="أدخل العنوان الأكاديمي الدقيق للورقة العلمية">
+                        <label class="form-label small fw-bold">عنوان البحث او المشروع العلمي كاملا *</label>
+                        <input type="text" name="title" class="form-control" required placeholder="ادخل العنوان الاكاديمي الدقيق للورقة العلمية">
                     </div>
                 </div>
             </div>
 
-            <!-- 3. رفع ملف البحث -->
             <div class="p-4 bg-white rounded-3 border border-2 border-primary mb-4 text-center">
                 <i class="bi bi-cloud-arrow-up-fill text-primary fs-1 mb-2 d-block"></i>
-                <h5 class="fw-bold text-dark mb-1">إرفاق ملف البحث الأصلي *</h5>
-                <p class="text-muted small mb-3">الصيغ المقبولة: <strong>PDF أو Word (.docx, .doc)</strong> بحد أقصى 15 ميجابايت</p>
+                <h5 class="fw-bold text-dark mb-1">ارفاق ملف البحث الاصلي *</h5>
+                <p class="text-muted small mb-3">الصيغ المقبولة: <strong>PDF او Word (.docx, .doc)</strong> بحد اقصى 15 ميجابايت</p>
                 
                 <div class="col-md-8 mx-auto">
                     <input type="file" name="file" class="form-control form-control-lg" accept=".pdf,.doc,.docx" required>
@@ -115,7 +108,7 @@
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-gold btn-lg py-3 fs-5 shadow">
-                    <i class="bi bi-send-check-fill me-2"></i> إرسال المشاركة وتوليد كود التتبع
+                    <i class="bi bi-send-check-fill me-2"></i> ارسال المشاركة وتوليد كود التتبع
                 </button>
             </div>
 
