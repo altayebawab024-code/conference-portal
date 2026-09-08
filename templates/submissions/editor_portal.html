@@ -10,8 +10,8 @@
             <h4 class="fw-bold text-primary mb-1"><i class="bi bi-kanban-fill"></i> لوحة تحكم رئيس التحرير (الفحص الاداري والاعتماد النهائي)</h4>
             <p class="text-muted small mb-0">مراجعة ملفات الابحاث الواردة، احالتها للجنة العلمية، واعتماد القرارات الصادرة للباحثين</p>
         </div>
-        <div class="d-flex gap-2">
-            <span class="badge bg-dark fs-6 d-flex align-items-center">صلاحية: رئيس التحرير</span>
+        <div>
+            <span class="badge bg-dark fs-6">صلاحية: رئيس التحرير</span>
         </div>
     </div>
 
@@ -147,7 +147,6 @@
                             </td>
                         </tr>
 
-                        <!-- نافذة الفحص الاولي والاحالة -->
                         <div class="modal fade" id="initialModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -180,7 +179,6 @@
                             </div>
                         </div>
 
-                        <!-- نافذة اعتماد القرار النهائي واخطار الباحث -->
                         <div class="modal fade" id="finalModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
