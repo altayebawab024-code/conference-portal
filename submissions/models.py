@@ -25,7 +25,7 @@ class ConferenceSubmission(models.Model):
         ('imam_mahdi', 'جامعة الامام المهدي'),
         ('bakht_ruda', 'جامعة بخت الرضا'),
         ('sennar', 'جامعة سنار'),
-        ('other', 'جامعة / مؤسسة اكاديمية اخرى'),
+        ('other', 'جامعة النيل الأبيض   '),
     ]
 
     ACADEMIC_DOMAINS = [
