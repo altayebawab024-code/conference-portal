@@ -52,21 +52,22 @@
                     جمهورية السودان<br>
                     وزارة التعليم العالي والبحث العلمي<br>
                     <strong>جامعة البطانة</strong><br>
-                    امانة الشؤون العلمية
+                    عمادة البحث العلمي والنشر والترجمة
                 </div>
                 <div class="text-center">
                     <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" style="width: 85px; height: 85px; object-fit: contain;">
                 </div>
                 <div class="text-end small fw-bold">
-                    مؤتمر جامعة البطانة العلمي<br>
-                    ملتقى جامعات قطاع الوسط<br>
-                    اللجنة المنظمة العليا
+                    المؤتمر العلمي الاول لجامعة البطانة<br>
+                    دور البحث العلمي في التنمية المستدامة واعادة الاعمار<br>
+                    اللجنة العلمية للمؤتمر
                 </div>
             </div>
 
             <div class="text-center mb-4">
                 <span class="badge bg-success text-white px-4 py-2 fs-6 mb-2">اشعار قبول رسمي وتصريح مشاركة في المؤتمر</span>
                 <h4 class="fw-bold text-dark mb-0">بطاقة دخول المؤتمر وجلسات تقديم الابحاث</h4>
+                <small class="text-muted">تاريخ انعقاد المؤتمر: 26 و 27 ديسمبر 2026م</small>
             </div>
 
             <div class="alert alert-light border border-2 border-success text-center py-2 mb-4">
@@ -92,8 +93,12 @@
                     <td class="fw-bold text-dark">{{ submission.title }}</td>
                 </tr>
                 <tr>
-                    <th class="table-light">المجال العلمي ونوع المشاركة</th>
-                    <td>{{ submission.get_academic_domain_display }} ({{ submission.get_participation_type_display }})</td>
+                    <th class="table-light">المحور العلمي للمؤتمر</th>
+                    <td>{{ submission.get_academic_domain_display }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">نوع المشاركة</th>
+                    <td>{{ submission.get_participation_type_display }}</td>
                 </tr>
                 <tr>
                     <th class="table-light">تاريخ اعتماد القرار</th>
@@ -103,23 +108,23 @@
 
             <div class="p-3 bg-light rounded-3 border mb-4 text-center small">
                 <strong>افادة القبول والاعتماد:</strong><br>
-                تشهد امانة الشؤون العلمية واللجنة المنظمة لمؤتمر جامعة البطانة بقبول الورقة البحثية الموضحة بياناتها اعلاه بعد اجتيازها مرحلة التحكيم العلمي المعتمد، ويعتبر هذا الاشعار تصريحا رسميا للباحث لحضور وتقديم بحثه في الجلسات العلمية للمؤتمر.
+                تشهد عمادة البحث العلمي والنشر والترجمة واللجنة العلمية لمؤتمر جامعة البطانة بقبول الورقة البحثية الموضحة بياناتها اعلاه بعد اجتيازها مرحلة التحكيم العلمي المعتمد، ويعتبر هذا الاشعار تصريحا رسميا للباحث لحضور وتقديم بحثه في الجلسات العلمية للمؤتمر المنعقدة بتاريخ 26 و 27 ديسمبر 2026م.
             </div>
 
             <div class="d-flex justify-content-between align-items-end pt-3 border-top">
                 <div class="text-center">
                     <small class="text-muted d-block">رئيس اللجنة العلمية</small>
-                    <strong class="small">اللجنة العلمية للمؤتمر</strong>
+                    <strong class="small">البروفيسور / سمية خليفة محمد المهدي</strong>
                 </div>
                 <div class="text-center">
                     <div class="text-success fw-bold small mb-1">الختم الالكتروني معتمد</div>
                     <div class="border border-2 border-success text-success px-4 py-1 rounded small fw-bold">
-                        جامعة البطانة - المؤتمر العلمي
+                        جامعة البطانة - المؤتمر العلمي الاول
                     </div>
                 </div>
                 <div class="text-center">
-                    <small class="text-muted d-block">رئيس التحرير / مدير المنصة</small>
-                    <strong class="small">هيئة تحرير المؤتمر</strong>
+                    <small class="text-muted d-block">رئيس هيئة التحرير</small>
+                    <strong class="small">عمادة البحث العلمي والنشر والترجمة</strong>
                 </div>
             </div>
 
