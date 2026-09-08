@@ -73,7 +73,7 @@
             {% if submission.status == 'accepted' %}
                 <div class="alert alert-success p-4 mb-4">
                     <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> افادة رسمية: تم قبول البحث للمشاركة في المؤتمر</h5>
-                    <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر هيئة المؤتمر واللجنة العلمية افادتكم بقبول ورقتكم العلمية للمشاركة في فعاليات مؤتمر جامعة البطانة." }}</p>
+                    <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة واللجنة العلمية لمؤتمر جامعة البطانة افادتكم بقبول ورقتكم العلمية للمشاركة في فعاليات المؤتمر." }}</p>
                     
                     <div class="text-center pt-3 border-top border-success">
                         <a href="{% url 'acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-success btn-lg px-4 fw-bold shadow">
