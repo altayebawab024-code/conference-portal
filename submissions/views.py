@@ -2,7 +2,6 @@ import os
 from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
@@ -15,21 +14,16 @@ from .models import ConferenceSubmission
 
 
 # -------------------------------------------------------------
-# دوال الحماية الامنية الصارمة لمنع التداخل بين الحسابات
+# حواجز الحماية الامنية الصارمة
 # -------------------------------------------------------------
 def editor_required(view_func):
-    """حاجز امني صارم: لا يسمح الا لرئيس التحرير فقط"""
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('login')
-        
-        # فحص هل المستخدم رئيس تحرير حصرا
         is_editor = request.user.username in ['editor', 'manager'] or request.user.groups.filter(name='Editors').exists()
         if is_editor or request.user.is_superuser:
             return view_func(request, *args, **kwargs)
-        
-        # اذا كان عضوا في اللجنة العلمية وحاول التسلل هنا
         return render(request, 'submissions/forbidden.html', {
             'required_role': 'هيئة تحرير المؤتمر',
             'current_role': 'اللجنة العلمية' if request.user.username == 'scientific' else request.user.username
@@ -38,20 +32,15 @@ def editor_required(view_func):
 
 
 def scientific_required(view_func):
-    """حاجز امني صارم: لا يسمح الا لاعضاء اللجنة العلمية فقط"""
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('login')
-        
-        # فحص هل المستخدم عضو لجنة علمية حصرا
         is_scientific = request.user.username == 'scientific' or request.user.groups.filter(name='ScientificCommittee').exists()
         if is_scientific or request.user.is_superuser:
             return view_func(request, *args, **kwargs)
-        
-        # اذا كان رئيس تحرير وحاول التسلل هنا
         return render(request, 'submissions/forbidden.html', {
-            'required_role': 'اللجنة العلمية',
+            'required_role': 'اللجنة العلمية للمؤتمر',
             'current_role': 'هيئة التحرير' if request.user.username in ['editor', 'manager'] else request.user.username
         }, status=403)
     return _wrapped_view
@@ -59,7 +48,7 @@ def scientific_required(view_func):
 
 @login_required
 def role_based_redirect(request):
-    """توجيه المستخدم بعد تسجيل الدخول الى لوحته الخاصة حصرا"""
+    """توجيه المستخدم بعد تسجيل الدخول حسب دوره"""
     if request.user.username in ['editor', 'manager'] or request.user.groups.filter(name='Editors').exists():
         return redirect('editor_portal')
     elif request.user.username == 'scientific' or request.user.groups.filter(name='ScientificCommittee').exists():
@@ -70,7 +59,7 @@ def role_based_redirect(request):
 
 
 # -------------------------------------------------------------
-# بوابات الباحثين المفتوحة
+# بوابات الباحثين
 # -------------------------------------------------------------
 def public_home(request):
     total_submissions = ConferenceSubmission.objects.count()
@@ -198,7 +187,7 @@ def acceptance_pass(request, tracking_code):
 
 
 # -------------------------------------------------------------
-# لوحة تحكم رئيس التحرير (محمية بالحاجز الامني editor_required)
+# لوحة هيئة التحرير
 # -------------------------------------------------------------
 @editor_required
 def editor_portal(request):
@@ -298,7 +287,7 @@ def editor_final_decision(request, pk):
 
 
 # -------------------------------------------------------------
-# لوحة تحكم اللجنة العلمية (محمية بالحاجز الامني scientific_required)
+# لوحة اللجنة العلمية
 # -------------------------------------------------------------
 @scientific_required
 def scientific_portal(request):
@@ -307,7 +296,7 @@ def scientific_portal(request):
     university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
-    # حجب تام للاوراق غير المفحوصة
+    # حجب الاوراق غير المفحوصة تماما
     submissions = ConferenceSubmission.objects.exclude(status__in=['submitted', 'defective_file'])
 
     if domain_filter:
@@ -384,7 +373,6 @@ def serve_submission_file(request, filename):
 
 
 def setup_admin_users(request):
-    """تهيئة الحسابات وفصل الصلاحيات بدقة"""
     try:
         call_command('makemigrations')
         call_command('migrate')
@@ -394,7 +382,6 @@ def setup_admin_users(request):
     editor_group, _ = Group.objects.get_or_create(name='Editors')
     scientific_group, _ = Group.objects.get_or_create(name='ScientificCommittee')
 
-    # حساب رئيس التحرير (صلاحية تحرير فقط)
     if User.objects.filter(username='editor').exists():
         User.objects.filter(username='editor').delete()
     u1 = User.objects.create_user('editor', 'editor@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
@@ -405,16 +392,14 @@ def setup_admin_users(request):
     u2 = User.objects.create_user('manager', 'manager@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
     u2.groups.add(editor_group)
 
-    # حساب اللجنة العلمية (صلاحية تحكيم فقط)
     if User.objects.filter(username='scientific').exists():
         User.objects.filter(username='scientific').delete()
     u3 = User.objects.create_user('scientific', 'scientific@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
     u3.groups.add(scientific_group)
 
-    # حساب الادمن الشامل
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser('admin', 'admin@albutana.edu.sd', '123')
 
     return render(request, 'submissions/home.html', {
-        'message_success': 'تم اعادة تهيئة الحسابات وفصل الصلاحيات الامنية بنجاح: حساب رئيس التحرير (editor / 123) - حساب اللجنة العلمية (scientific / 123) - المدير العام (admin / 123)'
+        'message_success': 'تم تهيئة جداول النظام وتامين الحسابات وفصل الصلاحيات بنجاح: حساب رئيس التحرير (editor / 123) - حساب اللجنة العلمية (scientific / 123) - المدير العام (admin / 123)'
     })
