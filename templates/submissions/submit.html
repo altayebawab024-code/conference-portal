@@ -10,9 +10,9 @@
         
         <div class="text-center mb-4 pb-3 border-bottom">
             <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
-            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">مؤتمر جامعة البطانة العلمي - ملتقى جامعات قطاع الوسط</span>
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الاول لجامعة البطانة</span>
             <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / مشاركة علمية</h3>
-            <p class="text-muted small">مخصصة للباحثين واعضاء هيئة التدريس بجامعات قطاع الوسط</p>
+            <p class="text-muted small">عمادة البحث العلمي والنشر والترجمة - ملتقى جامعات قطاع الوسط</p>
         </div>
 
         <form method="post" enctype="multipart/form-data">
@@ -68,11 +68,11 @@
             </div>
 
             <div class="p-3 bg-light rounded-3 border mb-4">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمجال الاكاديمي</h5>
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمحور الاكاديمي</h5>
 
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold">المجال العلمي *</label>
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold">المحور العلمي للمؤتمر *</label>
                         <select name="academic_domain" class="form-select" required>
                             {% for code, label in academic_domains %}
                                 <option value="{{ code }}">{{ label }}</option>
@@ -80,7 +80,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label class="form-label small fw-bold">نوع المشاركة *</label>
                         <select name="participation_type" class="form-select" required>
                             {% for code, label in participation_types %}
