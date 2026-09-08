@@ -5,10 +5,9 @@
 {% block content %}
 <div class="container mt-4 mb-5" style="max-width: 900px;">
 
-    <!-- صندوق البحث بكود التتبع -->
     <div class="card card-custom p-4 p-md-5 mb-4 text-center">
-        <h4 class="fw-bold text-primary mb-2"><i class="bi bi-search"></i> تتبع حالة البحث أو المشروع العلمي</h4>
-        <p class="text-muted small mb-4">أدخل كود التتبع الذي استلمته عند التقديم (أو البريد الإلكتروني / رقم الهاتف)</p>
+        <h4 class="fw-bold text-primary mb-2"><i class="bi bi-search"></i> تتبع حالة البحث او المشروع العلمي</h4>
+        <p class="text-muted small mb-4">ادخل كود التتبع الذي استلمته عند التقديم (او البريد الالكتروني / رقم الهاتف)</p>
 
         <form method="get" action="{% url 'track_submission' %}" class="row g-2 justify-content-center">
             <div class="col-md-7">
@@ -21,14 +20,13 @@
     </div>
 
     {% if submission %}
-        <!-- بطاقة نتائج التتبع والشريط المرئي -->
         <div class="card card-custom p-4 p-md-5 mb-4">
             
             <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 border-bottom mb-4">
                 <div>
                     <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-1">{{ submission.tracking_code }}</span>
                     <h4 class="fw-bold text-dark mb-0">{{ submission.title }}</h4>
-                    <p class="text-muted small mb-0">{{ submission.author_name }} | {{ submission.get_university_display }} ({{ submission.faculty }})</p>
+                    <p class="text-muted small mb-0">{{ submission.author_name }} | {{ submission.get_university_display }} ({{ submission.faculty }} - {{ submission.department }})</p>
                 </div>
                 <div>
                     <span class="badge 
@@ -42,7 +40,6 @@
                 </div>
             </div>
 
-            <!-- شريط التقدم المرئي -->
             <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-bezier2"></i> مسار تقييم وتحكيم البحث:</h6>
             <div class="d-flex flex-wrap justify-content-between align-items-center text-center gap-2 p-3 bg-light rounded-3 mb-4">
                 
@@ -53,45 +50,47 @@
                 <i class="bi bi-arrow-left text-muted"></i>
 
                 <span class="badge {% if submission.status != 'submitted' and submission.status != 'defective_file' %}bg-success{% elif submission.status == 'defective_file' %}bg-danger{% else %}bg-warning text-dark{% endif %} p-2 small">
-                    2. الفحص الإداري (مدير المنصة)
+                    2. الفحص الاداري (هيئة التحرير)
                     {% if submission.status != 'submitted' and submission.status != 'defective_file' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
                 </span>
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <span class="badge {% if submission.status in 'accepted,rejected' %}bg-success{% elif submission.status in 'under_scientific_review,revision_required' %}bg-warning text-dark{% else %}bg-secondary{% endif %} p-2 small">
+                <span class="badge {% if submission.status in 'accepted,rejected,revision_required' %}bg-success{% elif submission.status in 'under_scientific_review,scientific_evaluated' %}bg-warning text-dark{% else %}bg-secondary{% endif %} p-2 small">
                     3. تحكيم اللجنة العلمية
-                    {% if submission.status in 'accepted,rejected' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
+                    {% if submission.status in 'accepted,rejected,revision_required' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
                 </span>
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
                 <span class="badge {% if submission.status == 'accepted' %}bg-success{% elif submission.status == 'rejected' %}bg-danger{% else %}bg-secondary{% endif %} p-2 small">
                     4. النتيجة والاعتماد
-                    {% if submission.status == 'accepted' %}🎉{% elif submission.status == 'rejected' %}❌{% endif %}
                 </span>
 
             </div>
 
-            <!-- تقرير وإفادة اللجنة العلمية للباحث -->
+            <!-- قرار القبول النهائي وبطاقة الدخول -->
             {% if submission.status == 'accepted' %}
-                <div class="alert alert-success p-4">
-                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> إفادة اللجنة العلمية: تم قبول البحث</h5>
-                    <p class="mb-2 text-dark">{{ submission.scientific_decision_notes|default:"تهانينا! تم قبول بحثك للمشاركة في جلسات المؤتمر." }}</p>
-                    {% if submission.scientific_score %}
-                        <span class="badge bg-success fs-6">درجة التحكيم العلمي: {{ submission.scientific_score }}/100</span>
-                    {% endif %}
+                <div class="alert alert-success p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> افادة رسمية: تم قبول البحث للمشاركة في المؤتمر</h5>
+                    <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر هيئة المؤتمر واللجنة العلمية افادتكم بقبول ورقتكم العلمية للمشاركة في فعاليات مؤتمر جامعة البطانة." }}</p>
+                    
+                    <div class="text-center pt-3 border-top border-success">
+                        <a href="{% url 'acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-success btn-lg px-4 fw-bold shadow">
+                            <i class="bi bi-printer-fill me-2"></i> طباعة اشعار القبول وبطاقة دخول المؤتمر
+                        </a>
+                    </div>
                 </div>
             {% endif %}
 
             {% if submission.status == 'revision_required' %}
                 <div class="alert alert-warning p-4 mb-4">
-                    <h5 class="fw-bold text-dark mb-2"><i class="bi bi-pencil-square"></i> إفادة اللجنة العلمية: مطلوب إجراء تعديلات</h5>
-                    <p class="mb-3">{{ submission.scientific_decision_notes }}</p>
+                    <h5 class="fw-bold text-dark mb-2"><i class="bi bi-pencil-square"></i> افادة هيئة التحرير: مطلوب اجراء تعديلات اكاديمية</h5>
+                    <p class="mb-3">{{ submission.final_decision_notes|default:submission.scientific_decision_notes }}</p>
                     
                     <form method="post" action="{% url 'reupload_file' submission.tracking_code %}" enctype="multipart/form-data" class="bg-white p-3 rounded border">
                         {% csrf_token %}
-                        <label class="form-label small fw-bold text-dark">رفع النسخة المعدلة من البحث (Word أو PDF):</label>
+                        <label class="form-label small fw-bold text-dark">رفع النسخة المعدلة من البحث (Word او PDF):</label>
                         <div class="input-group">
                             <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx" required>
                             <button type="submit" class="btn btn-warning fw-bold">تسليم النسخة المعدلة</button>
@@ -102,22 +101,22 @@
 
             {% if submission.status == 'rejected' %}
                 <div class="alert alert-danger p-4">
-                    <h5 class="fw-bold text-danger mb-2"><i class="bi bi-x-circle-fill"></i> إفادة اللجنة العلمية: اعتذار</h5>
-                    <p class="mb-0">{{ submission.scientific_decision_notes|default:"نعتذر عن عدم قبول البحث في الدورة الحالية للمؤتمر، ونتمنى لكم التوفيق." }}</p>
+                    <h5 class="fw-bold text-danger mb-2"><i class="bi bi-x-circle-fill"></i> افادة هيئة المؤتمر: اعتذار</h5>
+                    <p class="mb-0">{{ submission.final_decision_notes|default:"نعتذر عن عدم قبول البحث في الدورة الحالية للمؤتمر، مع خالص الشكر والتقدير لاهتمامكم ومشاركتكم." }}</p>
                 </div>
             {% endif %}
 
             {% if submission.status == 'defective_file' %}
                 <div class="alert alert-danger p-4 mb-4">
-                    <h5 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle-fill"></i> ملاحظة مدير المنصة: الملف غير صالح</h5>
-                    <p class="mb-3">{{ submission.manager_notes|default:"الملف المرفوع فارغ أو تالف، يرجى إعادة رفع ملف سليم." }}</p>
+                    <h5 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle-fill"></i> ملاحظة هيئة التحرير: الملف غير صالح</h5>
+                    <p class="mb-3">{{ submission.editor_notes|default:"الملف المرفوع فارغ او تالف، يرجى اعادة رفع ملف سليم." }}</p>
                     
                     <form method="post" action="{% url 'reupload_file' submission.tracking_code %}" enctype="multipart/form-data" class="bg-white p-3 rounded border">
                         {% csrf_token %}
-                        <label class="form-label small fw-bold text-dark">اختر ملف البحث السليم (Word أو PDF):</label>
+                        <label class="form-label small fw-bold text-dark">اختر ملف البحث السليم (Word او PDF):</label>
                         <div class="input-group">
                             <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx" required>
-                            <button type="submit" class="btn btn-danger fw-bold">إعادة الرفع الآن</button>
+                            <button type="submit" class="btn btn-danger fw-bold">اعادة الرفع الان</button>
                         </div>
                     </form>
                 </div>
