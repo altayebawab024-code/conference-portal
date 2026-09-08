@@ -10,15 +10,15 @@ urlpatterns = [
     path('track/<str:tracking_code>/reupload/', views.reupload_file, name='reupload_file'),
     path('acceptance-pass/<str:tracking_code>/', views.acceptance_pass, name='acceptance_pass'),
 
-    # التوجيه الامني حسب الدور
+    # التوجيه الامني
     path('portal/redirect/', views.role_based_redirect, name='role_based_redirect'),
 
-    # لوحة رئيس التحرير (الفحص الاداري والاعتماد النهائي)
+    # لوحة هيئة التحرير
     path('portal/editor/', views.editor_portal, name='editor_portal'),
     path('portal/editor/action/<int:pk>/', views.editor_action, name='editor_action'),
     path('portal/editor/final-decision/<int:pk>/', views.editor_final_decision, name='editor_final_decision'),
 
-    # لوحة اللجنة العلمية (التحكيم ورفع التوصيات)
+    # لوحة اللجنة العلمية
     path('portal/scientific/', views.scientific_portal, name='scientific_portal'),
     path('portal/scientific/action/<int:pk>/', views.scientific_action, name='scientific_action'),
 
