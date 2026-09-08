@@ -50,7 +50,7 @@
                         <th>كود البحث</th>
                         <th>الباحث والمؤسسة</th>
                         <th>الكلية والقسم الاكاديمي</th>
-                        <th>عنوان الورقة والمجال</th>
+                        <th>عنوان الورقة والمحور</th>
                         <th>الملف</th>
                         <th>الدرجة السرية</th>
                         <th>الحالة</th>
@@ -71,7 +71,7 @@
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">{{ sub.title }}</div>
-                                <span class="badge bg-light text-dark border small">{{ sub.get_academic_domain_display }}</span>
+                                <span class="badge bg-light text-dark border small">{{ sub.get_academic_domain_display|truncatechars:35 }}</span>
                             </td>
                             <td>
                                 {% if sub.is_pdf %}
@@ -171,7 +171,7 @@ function applyTemplate(id) {
     if (!select || !textarea) return;
 
     if (select.value === 'accept') {
-        textarea.value = 'توصي اللجنة العلمية بقبول الورقة البحثية للمشاركة في جلسات مؤتمر جامعة البطانة لاستيفائها المعايير العلمية والمنهجية.';
+        textarea.value = 'توصي اللجنة العلمية بقبول الورقة البحثية للمشاركة في جلسات المؤتمر العلمي الاول لجامعة البطانة لاستيفائها المعايير العلمية والمنهجية.';
     } else if (select.value === 'revise') {
         textarea.value = 'توصي اللجنة العلمية بقبول الورقة شريطة اجراء التعديلات المنهجية والاكاديمية الموضحة في الملاحظات واعادة تسليم النسخة المعدلة.';
     } else if (select.value === 'reject') {
