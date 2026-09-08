@@ -1,43 +1,78 @@
 import os
+from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
-from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.http import FileResponse, Http404, HttpResponseForbidden
+from django.http import FileResponse, Http404
 from django.conf import settings
 from django.core.management import call_command
 from .models import ConferenceSubmission
 
 
-# دوال التحقق الامني من الصلاحيات والادوار
-def is_editor_check(user):
-    if not user.is_authenticated:
-        return False
-    return user.is_superuser or user.username in ['editor', 'manager'] or user.groups.filter(name='Editors').exists()
+# -------------------------------------------------------------
+# دوال الحماية الامنية الصارمة لمنع التداخل بين الحسابات
+# -------------------------------------------------------------
+def editor_required(view_func):
+    """حاجز امني صارم: لا يسمح الا لرئيس التحرير فقط"""
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        
+        # فحص هل المستخدم رئيس تحرير حصرا
+        is_editor = request.user.username in ['editor', 'manager'] or request.user.groups.filter(name='Editors').exists()
+        if is_editor or request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+        
+        # اذا كان عضوا في اللجنة العلمية وحاول التسلل هنا
+        return render(request, 'submissions/forbidden.html', {
+            'required_role': 'هيئة تحرير المؤتمر',
+            'current_role': 'اللجنة العلمية' if request.user.username == 'scientific' else request.user.username
+        }, status=403)
+    return _wrapped_view
 
-def is_scientific_check(user):
-    if not user.is_authenticated:
-        return False
-    return user.is_superuser or user.username == 'scientific' or user.groups.filter(name='ScientificCommittee').exists()
+
+def scientific_required(view_func):
+    """حاجز امني صارم: لا يسمح الا لاعضاء اللجنة العلمية فقط"""
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        
+        # فحص هل المستخدم عضو لجنة علمية حصرا
+        is_scientific = request.user.username == 'scientific' or request.user.groups.filter(name='ScientificCommittee').exists()
+        if is_scientific or request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+        
+        # اذا كان رئيس تحرير وحاول التسلل هنا
+        return render(request, 'submissions/forbidden.html', {
+            'required_role': 'اللجنة العلمية',
+            'current_role': 'هيئة التحرير' if request.user.username in ['editor', 'manager'] else request.user.username
+        }, status=403)
+    return _wrapped_view
 
 
 @login_required
 def role_based_redirect(request):
-    """توجيه المستخدم تلقائيا الى لوحته الخاصة حسب صلاحياته ومنع التداخل"""
-    if is_editor_check(request.user):
+    """توجيه المستخدم بعد تسجيل الدخول الى لوحته الخاصة حصرا"""
+    if request.user.username in ['editor', 'manager'] or request.user.groups.filter(name='Editors').exists():
         return redirect('editor_portal')
-    elif is_scientific_check(request.user):
+    elif request.user.username == 'scientific' or request.user.groups.filter(name='ScientificCommittee').exists():
         return redirect('scientific_portal')
     elif request.user.is_superuser:
         return redirect('/admin/')
     return redirect('home')
 
 
+# -------------------------------------------------------------
+# بوابات الباحثين المفتوحة
+# -------------------------------------------------------------
 def public_home(request):
-    """الصفحة الرئيسية لمؤتمر جامعة البطانة"""
     total_submissions = ConferenceSubmission.objects.count()
     accepted_submissions = ConferenceSubmission.objects.filter(status='accepted').count()
     domains_count = len(ConferenceSubmission.ACADEMIC_DOMAINS)
@@ -53,7 +88,6 @@ def public_home(request):
 
 
 def submit_paper(request):
-    """استمارة التقديم المفتوحة للباحثين"""
     if request.method == 'POST':
         author_name = request.POST.get('author_name', '').strip()
         academic_degree = request.POST.get('academic_degree')
@@ -110,7 +144,6 @@ def submission_success(request, tracking_code):
 
 
 def track_submission(request):
-    """تتبع حالة البحث - محجوب عنها درجات التحكيم السرية"""
     search_query = request.GET.get('q', '').strip()
     submission = None
 
@@ -157,7 +190,6 @@ def reupload_file(request, tracking_code):
 
 
 def acceptance_pass(request, tracking_code):
-    """اشعار وبطاقة قبول ودخول المؤتمر الرسمية القابلة للطباعة"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
     if submission.status != 'accepted':
         messages.error(request, 'لا يمكن اصدار بطاقة دخول المؤتمر لبحث لم يتم اعتماده وقبوله رسميا بعد.')
@@ -166,9 +198,9 @@ def acceptance_pass(request, tracking_code):
 
 
 # -------------------------------------------------------------
-# لوحة تحكم رئيس التحرير (محمية امنيا)
+# لوحة تحكم رئيس التحرير (محمية بالحاجز الامني editor_required)
 # -------------------------------------------------------------
-@user_passes_test(is_editor_check, login_url='/accounts/login/')
+@editor_required
 def editor_portal(request):
     status_filter = request.GET.get('status', '')
     domain_filter = request.GET.get('domain', '')
@@ -214,9 +246,8 @@ def editor_portal(request):
     return render(request, 'submissions/editor_portal.html', context)
 
 
-@user_passes_test(is_editor_check, login_url='/accounts/login/')
+@editor_required
 def editor_action(request, pk):
-    """اجراء رئيس التحرير: الفحص الاداري والاحالة للجنة العلمية"""
     submission = get_object_or_404(ConferenceSubmission, pk=pk)
 
     if request.method == 'POST':
@@ -239,9 +270,8 @@ def editor_action(request, pk):
     return redirect('editor_portal')
 
 
-@user_passes_test(is_editor_check, login_url='/accounts/login/')
+@editor_required
 def editor_final_decision(request, pk):
-    """اعتماد القرار النهائي الصادر من رئيس التحرير للباحث بناء على تقرير اللجنة العلمية"""
     submission = get_object_or_404(ConferenceSubmission, pk=pk)
 
     if request.method == 'POST':
@@ -268,16 +298,16 @@ def editor_final_decision(request, pk):
 
 
 # -------------------------------------------------------------
-# لوحة تحكم اللجنة العلمية (محمية امنيا - لا تظهر الا الاوراق المحالة)
+# لوحة تحكم اللجنة العلمية (محمية بالحاجز الامني scientific_required)
 # -------------------------------------------------------------
-@user_passes_test(is_scientific_check, login_url='/accounts/login/')
+@scientific_required
 def scientific_portal(request):
     domain_filter = request.GET.get('domain', '')
     status_filter = request.GET.get('status', '')
     university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
-    # حجب الاوراق غير المفحوصة اداريا او التالفة تماما عن اللجنة العلمية
+    # حجب تام للاوراق غير المفحوصة
     submissions = ConferenceSubmission.objects.exclude(status__in=['submitted', 'defective_file'])
 
     if domain_filter:
@@ -316,9 +346,8 @@ def scientific_portal(request):
     return render(request, 'submissions/scientific_portal.html', context)
 
 
-@user_passes_test(is_scientific_check, login_url='/accounts/login/')
+@scientific_required
 def scientific_action(request, pk):
-    """رفع توصية وتقرير التحكيم من اللجنة العلمية الى رئيس التحرير (لا تذهب للباحث مباشرة)"""
     submission = get_object_or_404(ConferenceSubmission, pk=pk)
 
     if request.method == 'POST':
@@ -355,7 +384,7 @@ def serve_submission_file(request, filename):
 
 
 def setup_admin_users(request):
-    """تهيئة مجموعات الصلاحيات والحسابات الرسمية وفصل الادوار"""
+    """تهيئة الحسابات وفصل الصلاحيات بدقة"""
     try:
         call_command('makemigrations')
         call_command('migrate')
@@ -365,21 +394,27 @@ def setup_admin_users(request):
     editor_group, _ = Group.objects.get_or_create(name='Editors')
     scientific_group, _ = Group.objects.get_or_create(name='ScientificCommittee')
 
-    if not User.objects.filter(username='editor').exists():
-        u = User.objects.create_user('editor', 'editor@albutana.edu.sd', '123', is_staff=True)
-        u.groups.add(editor_group)
+    # حساب رئيس التحرير (صلاحية تحرير فقط)
+    if User.objects.filter(username='editor').exists():
+        User.objects.filter(username='editor').delete()
+    u1 = User.objects.create_user('editor', 'editor@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
+    u1.groups.add(editor_group)
 
-    if not User.objects.filter(username='manager').exists():
-        u = User.objects.create_user('manager', 'manager@albutana.edu.sd', '123', is_staff=True)
-        u.groups.add(editor_group)
+    if User.objects.filter(username='manager').exists():
+        User.objects.filter(username='manager').delete()
+    u2 = User.objects.create_user('manager', 'manager@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
+    u2.groups.add(editor_group)
 
-    if not User.objects.filter(username='scientific').exists():
-        u = User.objects.create_user('scientific', 'scientific@albutana.edu.sd', '123', is_staff=True)
-        u.groups.add(scientific_group)
+    # حساب اللجنة العلمية (صلاحية تحكيم فقط)
+    if User.objects.filter(username='scientific').exists():
+        User.objects.filter(username='scientific').delete()
+    u3 = User.objects.create_user('scientific', 'scientific@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
+    u3.groups.add(scientific_group)
 
+    # حساب الادمن الشامل
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser('admin', 'admin@albutana.edu.sd', '123')
 
     return render(request, 'submissions/home.html', {
-        'message_success': 'تم تهيئة جداول النظام وتامين الحسابات وفصل الصلاحيات بنجاح: حساب رئيس التحرير (editor / 123) - حساب اللجنة العلمية (scientific / 123) - المدير العام (admin / 123)'
+        'message_success': 'تم اعادة تهيئة الحسابات وفصل الصلاحيات الامنية بنجاح: حساب رئيس التحرير (editor / 123) - حساب اللجنة العلمية (scientific / 123) - المدير العام (admin / 123)'
     })
