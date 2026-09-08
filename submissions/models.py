@@ -11,37 +11,37 @@ MAX_UPLOAD_SIZE_MB = 15
 def validate_file_size(file):
     limit_bytes = MAX_UPLOAD_SIZE_MB * 1024 * 1024
     if file.size > limit_bytes:
-        raise ValidationError(f'حجم الملف يتجاوز الحد الأقصى المسموح ({MAX_UPLOAD_SIZE_MB} ميجابايت).')
+        raise ValidationError(f'حجم الملف يتجاوز الحد الاقصى المسموح ({MAX_UPLOAD_SIZE_MB} ميجابايت).')
 
 
 class ConferenceSubmission(models.Model):
-    """جدول المشاركات والأوراق العلمية لجامعات قطاع الوسط"""
+    """جدول مشاركات مؤتمر جامعة البطانة - ملتقى جامعات قطاع الوسط"""
 
     UNIVERSITIES = [
-        ('butana', ' جامعة البطانة'),
-        ('gezira', ' جامعة الجزيرة'),
-        ('quran_taaseel', ' جامعة القرآن الكريم وتأصيل العلوم'),
-        ('managil', ' جامعة المناقل للعلوم والتكنولوجيا'),
-        ('imam_mahdi', ' جامعة الإمام المهدي'),
-        ('bakht_ruda', ' جامعة بخت الرضا'),
-        ('sennar', ' جامعة سنار'),
-        ('other', '  جامعة النيل الابيض    '),
+        ('butana', 'جامعة البطانة'),
+        ('gezira', 'جامعة الجزيرة'),
+        ('quran_taaseel', 'جامعة القران الكريم وتاصيل العلوم'),
+        ('managil', 'جامعة المناقل للعلوم والتكنولوجيا'),
+        ('imam_mahdi', 'جامعة الامام المهدي'),
+        ('bakht_ruda', 'جامعة بخت الرضا'),
+        ('sennar', 'جامعة سنار'),
+        ('other', 'جامعة / مؤسسة اكاديمية اخرى'),
     ]
 
     ACADEMIC_DOMAINS = [
-        ('applied', ' العلوم التطبيقية'),
-        ('social', ' العلوم الاجتماعية'),
-        ('humanities', ' العلوم الإنسانية'),
-        ('educational', ' العلوم التربوية'),
-        ('other', ' علوم أخرى'),
+        ('applied', 'العلوم التطبيقية'),
+        ('social', 'العلوم الاجتماعية'),
+        ('humanities', 'العلوم الانسانية'),
+        ('educational', 'العلوم التربوية'),
+        ('other', 'علوم اخرى'),
     ]
 
     ACADEMIC_DEGREES = [
-        ('professor', 'أستاذ بروفيسور (Professor)'),
-        ('assoc_prof', 'أستاذ مشارك (Associate Professor)'),
-        ('asst_prof', 'أستاذ مساعد (Assistant Professor)'),
+        ('professor', 'استاذ بروفيسور (Professor)'),
+        ('assoc_prof', 'استاذ مشارك (Associate Professor)'),
+        ('asst_prof', 'استاذ مساعد (Assistant Professor)'),
         ('lecturer', 'محاضر (Lecturer)'),
-        ('researcher', 'باحث أكاديمي (Researcher)'),
+        ('researcher', 'باحث اكاديمي (Researcher)'),
         ('postgrad', 'طالب دراسات عليا (Postgraduate Student)'),
         ('undergrad', 'طالب جامعي / مشروع متميز (Undergraduate)'),
     ]
@@ -55,27 +55,28 @@ class ConferenceSubmission(models.Model):
     ]
 
     SUBMISSION_STATUS = [
-        ('submitted', 'تم الاستلام بنجاح (بانتظار الفحص الإداري)'),
-        ('defective_file', '⚠️ تنبيه: الملف غير صالح / تالف (مطلوب إعادة الرفع)'),
-        ('under_scientific_review', '🔬 محال للجنة العلمية (قيد التحكيم والتقييم)'),
-        ('revision_required', '📝 مطلوب إجراء تعديلات أكاديمية من اللجنة العلمية'),
-        ('accepted', '🎉 مبارك! تم قبول البحث رسمياً من اللجنة العلمية'),
-        ('rejected', '❌ نعتذر عن عدم قبول البحث في الدورة الحالية'),
+        ('submitted', 'تم الاستلام (قيد الفحص الاداري)'),
+        ('defective_file', 'تنبيه: الملف غير صالح (مطلوب اعادة الرفع)'),
+        ('under_scientific_review', 'محال للجنة العلمية (قيد التحكيم)'),
+        ('scientific_evaluated', 'تم انتهاء التحكيم (بانتظار اعتماد رئيس التحرير)'),
+        ('revision_required', 'مطلوب اجراء تعديلات اكاديمية'),
+        ('accepted', 'تم قبول البحث للمشاركة في المؤتمر'),
+        ('rejected', 'اعتذار عن عدم قبول البحث في الدورة الحالية'),
     ]
 
     tracking_code = models.CharField(max_length=50, unique=True, blank=True, verbose_name="كود تتبع الطلب")
 
     # 1. بيانات الباحث
-    author_name = models.CharField(max_length=200, verbose_name="اسم الباحث كاملاً")
+    author_name = models.CharField(max_length=200, verbose_name="اسم الباحث كاملا")
     academic_degree = models.CharField(max_length=30, choices=ACADEMIC_DEGREES, default='researcher', verbose_name="الدرجة العلمية")
-    university = models.CharField(max_length=50, choices=UNIVERSITIES, default='butana', verbose_name="الجامعة / المؤسسة الأكاديمية")
+    university = models.CharField(max_length=50, choices=UNIVERSITIES, default='butana', verbose_name="الجامعة / المؤسسة الاكاديمية")
     faculty = models.CharField(max_length=200, default='', verbose_name="الكلية")
-    department = models.CharField(max_length=200, default='', verbose_name="القسم الأكاديمي")
-    email = models.EmailField(verbose_name="البريد الإلكتروني للباحث")
+    department = models.CharField(max_length=200, default='', verbose_name="القسم الاكاديمي")
+    email = models.EmailField(verbose_name="البريد الالكتروني للباحث")
     phone = models.CharField(max_length=30, verbose_name="رقم الهاتف / الواتساب")
 
     # 2. بيانات المشاركة
-    conference_title = models.CharField(max_length=255, default="المؤتمر العلمي الدولي الشامل - جامعة البطانة", verbose_name="اسم المؤتمر")
+    conference_title = models.CharField(max_length=255, default="مؤتمر جامعة البطانة العلمي - ملتقى جامعات قطاع الوسط", verbose_name="اسم المؤتمر")
     academic_domain = models.CharField(max_length=30, choices=ACADEMIC_DOMAINS, default='applied', verbose_name="المجال العلمي")
     participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='full_paper', verbose_name="نوع المشاركة")
     title = models.CharField(max_length=300, verbose_name="عنوان البحث")
@@ -83,33 +84,39 @@ class ConferenceSubmission(models.Model):
     # 3. ملف المشاركة
     file = models.FileField(
         upload_to='submissions_files/',
-        verbose_name="ملف البحث (Word أو PDF)",
+        verbose_name="ملف البحث (Word او PDF)",
         validators=[
             FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx']),
             validate_file_size,
         ]
     )
 
-    # 4. حالة الطلب ومسار التحكيم
+    # 4. مسار المتابعة
     status = models.CharField(max_length=35, choices=SUBMISSION_STATUS, default='submitted', verbose_name="حالة الطلب")
 
-    # 5. إجراءات مدير المنصة
-    manager_notes = models.TextField(null=True, blank=True, verbose_name="ملاحظات مدير المنصة")
-    manager_checked_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ فحص المدير")
-    manager_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_submissions', verbose_name="تم الفحص بواسطة المدير")
+    # 5. اجراءات رئيس التحرير (الفحص الاولي)
+    editor_notes = models.TextField(null=True, blank=True, verbose_name="ملاحظات رئيس التحرير")
+    editor_checked_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ الفحص الاداري")
+    editor_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='editor_managed_submissions', verbose_name="تم الفحص بواسطة رئيس التحرير")
 
-    # 6. قرارات وتقييم اللجنة العلمية
-    scientific_score = models.PositiveIntegerField(null=True, blank=True, verbose_name="درجة التحكيم العلمي (من 100)")
-    scientific_decision_notes = models.TextField(null=True, blank=True, verbose_name="تقرير وإفادة اللجنة العلمية للباحث")
+    # 6. تقييم اللجنة العلمية (داخلي وسري)
+    scientific_score = models.PositiveIntegerField(null=True, blank=True, verbose_name="درجة التحكيم العلمي (من 100 - سرية)")
+    scientific_recommendation = models.CharField(max_length=30, null=True, blank=True, verbose_name="توصية اللجنة العلمية")
+    scientific_decision_notes = models.TextField(null=True, blank=True, verbose_name="تقرير وتوصية اللجنة العلمية لرئيس التحرير")
     scientific_reviewed_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ تحكيم اللجنة العلمية")
-    scientific_reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_submissions', verbose_name="المحكّم / ممثل اللجنة العلمية")
+    scientific_reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='scientific_reviewed_submissions', verbose_name="المحكم / ممثل اللجنة العلمية")
+
+    # 7. القرار النهائي المعتمد للباحث
+    final_decision_notes = models.TextField(null=True, blank=True, verbose_name="نص القرار والافادة الرسمية الصادرة للباحث")
+    final_decision_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ اعتماد القرار النهائي")
+    final_decision_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='final_decision_submissions', verbose_name="معتمد القرار النهائي")
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التقديم")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="تاريخ آخر تحديث")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="تاريخ اخر تحديث")
 
     class Meta:
-        verbose_name = "مشاركة / ورقة علمية مقدمة"
-        verbose_name_plural = "المشاركات والأوراق العلمية للمؤتمرات"
+        verbose_name = "مشاركة / ورقة علمية"
+        verbose_name_plural = "المشاركات والاوراق العلمية للمؤتمر"
         ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
