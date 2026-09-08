@@ -1,7 +1,7 @@
 {% extends 'submissions/base.html' %}
 {% load static %}
 
-{% block title %}الرئيسية - مؤتمر جامعة البطانة العلمي{% endblock %}
+{% block title %}الرئيسية - المؤتمر العلمي الاول لجامعة البطانة{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -12,15 +12,15 @@
         </div>
     {% endif %}
 
+    <!-- Hero Header -->
     <div class="card card-custom p-5 mb-4 text-white text-center" style="background: linear-gradient(135deg, #091e3a 0%, #10375c 70%, #001f54 100%);">
-        <div class="py-3">
+        <div class="py-2">
             <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-3 rounded-circle p-1 bg-white shadow" style="width: 90px; height: 90px; object-fit: contain;">
             <br>
-            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-3 fs-6">مؤتمر جامعة البطانة العلمي - ملتقى جامعات قطاع الوسط</span>
-            <h1 class="display-6 fw-bold mb-3">بوابة استقبال وتحكيم الاوراق والمشاريع العلمية</h1>
-            <p class="lead text-light mb-4 mx-auto" style="max-width: 800px;">
-                نرحب بجميع الباحثين واعضاء هيئة التدريس وطلاب الدراسات العليا بجامعات قطاع الوسط للمشاركة في فعاليات مؤتمر جامعة البطانة.
-            </p>
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 fs-6">جامعة البطانة - عمادة البحث العلمي والنشر والترجمة</span>
+            <h1 class="display-6 fw-bold mb-2">المؤتمر العلمي الاول لجامعة البطانة</h1>
+            <h4 class="text-warning fw-bold mb-3">بعنوان: دور البحث العلمي في التنمية المستدامة واعادة الاعمار</h4>
+            <p class="lead text-light fst-italic mb-4">"بالعلم نعيد البناء، وبالمعرفة نصنع المستقبل"</p>
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 <a href="{% url 'submit_paper' %}" class="btn btn-gold btn-lg px-4 py-3 shadow">
                     <i class="bi bi-cloud-arrow-up-fill me-2"></i> تقديم بحث او مشروع جديد
@@ -32,72 +32,83 @@
         </div>
     </div>
 
+    <!-- التواريخ المهمة للمؤتمر -->
     <div class="row g-3 mb-4 text-center">
-        <div class="col-md-4">
-            <div class="card card-custom p-4 border-bottom border-primary border-4">
-                <h2 class="fw-bold text-primary mb-1">{{ total_submissions }}</h2>
-                <span class="text-muted fw-bold small">اجمالي المشاركات المقدمة</span>
+        <div class="col-md-3">
+            <div class="card card-custom p-3 border-bottom border-primary border-4 h-100">
+                <span class="text-muted small fw-bold">اخر موعد لاستلام الملخصات</span>
+                <h5 class="fw-bold text-primary mt-1">10 اكتوبر 2026م</h5>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-custom p-4 border-bottom border-success border-4">
-                <h2 class="fw-bold text-success mb-1">{{ accepted_submissions }}</h2>
-                <span class="text-muted fw-bold small">الابحاث المقبولة للمؤتمر</span>
+        <div class="col-md-3">
+            <div class="card card-custom p-3 border-bottom border-warning border-4 h-100">
+                <span class="text-muted small fw-bold">اشعار القبول</span>
+                <h5 class="fw-bold text-dark mt-1">20 اكتوبر 2026م</h5>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-custom p-4 border-bottom border-warning border-4">
-                <h2 class="fw-bold text-warning mb-1">{{ domains_count }}</h2>
-                <span class="text-muted fw-bold small">المجالات العلمية المعتمدة</span>
+        <div class="col-md-3">
+            <div class="card card-custom p-3 border-bottom border-info border-4 h-100">
+                <span class="text-muted small fw-bold">اخر موعد لتسليم الورقة كاملة</span>
+                <h5 class="fw-bold text-info mt-1">10 نوفمبر 2026م</h5>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom p-3 border-bottom border-success border-4 h-100">
+                <span class="text-muted small fw-bold">تاريخ انعقاد المؤتمر</span>
+                <h5 class="fw-bold text-success mt-1">26 و 27 ديسمبر 2026م</h5>
             </div>
         </div>
     </div>
 
+    <!-- المحاور العلمية الرسمية -->
     <div class="card card-custom p-4 mb-4">
-        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المجالات العلمية المعتمدة بالمؤتمر</h4>
-        <div class="row g-3 justify-content-center">
+        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المحاور العلمية للمؤتمر</h4>
+        <div class="row g-3">
             {% for code, label in academic_domains %}
-                <div class="col-md-4 col-lg">
-                    <div class="p-3 bg-light rounded-3 border h-100 text-center shadow-sm">
-                        <span class="fw-bold fs-6 text-dark">{{ label }}</span>
+                <div class="col-md-12">
+                    <div class="p-3 bg-light rounded-3 border d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-primary me-3 fs-5"></i>
+                        <span class="fw-bold text-dark">{{ label }}</span>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
 
-    <div class="card card-custom p-4">
-        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-bezier2 text-primary"></i> دورة وسير عمل تحكيم الاوراق العلمية</h4>
-        <div class="row text-center g-4">
-            <div class="col-md-3">
-                <div class="avatar bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
-                    <i class="bi bi-file-earmark-plus-fill fs-3"></i>
-                </div>
-                <h6 class="fw-bold mb-1">1. التقديم الالكتروني</h6>
-                <p class="small text-muted mb-0">رفع البحث بصيغة Word او PDF والحصول على كود التتبع فورا.</p>
-            </div>
-            <div class="col-md-3">
-                <div class="avatar bg-warning text-dark rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
-                    <i class="bi bi-shield-check fs-3"></i>
-                </div>
-                <h6 class="fw-bold mb-1">2. التدقيق والفحص الاداري</h6>
-                <p class="small text-muted mb-0">مراجعة الملف من قبل هيئة التحرير واحالة الورقة للجنة العلمية.</p>
-            </div>
-            <div class="col-md-3">
-                <div class="avatar bg-info text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
-                    <i class="bi bi-award-fill fs-3"></i>
-                </div>
-                <h6 class="fw-bold mb-1">3. تحكيم اللجنة العلمية</h6>
-                <p class="small text-muted mb-0">تقييم الورقة واعداد التوصية ورفع التقرير لهيئة التحرير.</p>
-            </div>
-            <div class="col-md-3">
-                <div class="avatar bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
-                    <i class="bi bi-check-circle-fill fs-3"></i>
-                </div>
-                <h6 class="fw-bold mb-1">4. اعتماد القرار وبطاقة الدخول</h6>
-                <p class="small text-muted mb-0">اعتماد النتيجة من رئيس التحرير وطباعة بطاقة دخول المؤتمر.</p>
+    <!-- شروط وضوابط المشاركة وموجهات الكتابة -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card card-custom p-4 h-100">
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-shield-check"></i> شروط وضوابط المشاركة</h5>
+                <ul class="small text-muted mb-0 lh-lg">
+                    <li>ان يكون البحث اصيلا ولم يسبق نشره او تقديمه لدى مؤتمر او جهة علمية اخرى.</li>
+                    <li>ان يرتبط البحث بشكل مباشر باحد محاور المؤتمر المعتمدة.</li>
+                    <li>تخضع جميع البحوث المقدمة للتحكيم العلمي من قبل اللجنة العلمية.</li>
+                    <li>يلتزم الباحث بالامانة العلمية وقواعد الاقتباس والتوثيق الاكاديمي المعتمد.</li>
+                    <li>ان تمثل الاوراق العلمية مشروعات عملية واضحة المعالم قابلة للتنفيذ.</li>
+                    <li>تكتب البحوث باللغة العربية او الانجليزية.</li>
+                </ul>
             </div>
         </div>
+
+        <div class="col-md-6">
+            <div class="card card-custom p-4 h-100">
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-file-earmark-text"></i> موجهات الكتابة والتوثيق</h5>
+                <ul class="small text-muted mb-0 lh-lg">
+                    <li>حجم الخط 14 بنط Simplified Arabic للمتن.</li>
+                    <li>تترك مسافة بوصة واحدة هامش اعلى واسفل الصفحة.</li>
+                    <li>تترك مسافة بوصة ونصف هامش على الجانب الايمن والايسر للصفحة.</li>
+                    <li>يرقم البحث منتصف السطر اسفل الصفحة مع توثيق المصادر والمراجع بدقة.</li>
+                    <li>الملفات المقبولة للرفع عبر المنصة: Word (.docx, .doc) او PDF.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- قيادة المؤتمر -->
+    <div class="card card-custom p-4 text-center bg-light">
+        <h6 class="fw-bold text-dark mb-1">رئيس اللجنة العلمية للمؤتمر:</h6>
+        <h5 class="fw-bold text-primary mb-0">البروفيسور / سمية خليفة محمد المهدي</h5>
     </div>
 
 </div>
