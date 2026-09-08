@@ -15,8 +15,9 @@ def validate_file_size(file):
 
 
 class ConferenceSubmission(models.Model):
-    """جدول مشاركات مؤتمر جامعة البطانة - ملتقى جامعات قطاع الوسط"""
+    """جدول مشاركات المؤتمر العلمي الاول لجامعة البطانة"""
 
+    # جامعات قطاع الوسط المعتمدة
     UNIVERSITIES = [
         ('butana', 'جامعة البطانة'),
         ('gezira', 'جامعة الجزيرة'),
@@ -25,15 +26,16 @@ class ConferenceSubmission(models.Model):
         ('imam_mahdi', 'جامعة الامام المهدي'),
         ('bakht_ruda', 'جامعة بخت الرضا'),
         ('sennar', 'جامعة سنار'),
-        ('other', 'جامعة النيل الأبيض   '),
+        ('other', 'جامعة النيل الأبيض  '),
     ]
 
+    # المحاور العلمية الخمسة الرسمية للمؤتمر نصا من البوستر الرسمي
     ACADEMIC_DOMAINS = [
-        ('applied', 'العلوم التطبيقية'),
-        ('social', 'العلوم الاجتماعية'),
-        ('humanities', 'العلوم الانسانية'),
-        ('educational', 'العلوم التربوية'),
-        ('other', 'علوم اخرى'),
+        ('track_1', 'المحور الاول: البحث العلمي ودوره في التنمية المستدامة واعادة الاعمار بعد الحرب'),
+        ('track_2', 'المحور الثاني: التكنولوجيا والابتكار والتحول الرقمي ودورها في التنمية المستدامة واعادة الاعمار'),
+        ('track_3', 'المحور الثالث: دور التعليم وبناء القدرات في التنمية المستدامة واعادة الاعمار'),
+        ('track_4', 'المحور الرابع: الصحة والبيئة والامن الغذائي والمائي'),
+        ('track_5', 'المحور الخامس: دور العلوم الاجتماعية والانسانية والسلم المجتمعي في التنمية المستدامة واعادة الاعمار'),
     ]
 
     ACADEMIC_DEGREES = [
@@ -58,7 +60,7 @@ class ConferenceSubmission(models.Model):
         ('submitted', 'تم الاستلام (قيد الفحص الاداري)'),
         ('defective_file', 'تنبيه: الملف غير صالح (مطلوب اعادة الرفع)'),
         ('under_scientific_review', 'محال للجنة العلمية (قيد التحكيم)'),
-        ('scientific_evaluated', 'تم انتهاء التحكيم (بانتظار اعتماد رئيس التحرير)'),
+        ('scientific_evaluated', 'تم انتهاء التحكيم (بانتظار اعتماد هيئة التحرير)'),
         ('revision_required', 'مطلوب اجراء تعديلات اكاديمية'),
         ('accepted', 'تم قبول البحث للمشاركة في المؤتمر'),
         ('rejected', 'اعتذار عن عدم قبول البحث في الدورة الحالية'),
@@ -76,8 +78,12 @@ class ConferenceSubmission(models.Model):
     phone = models.CharField(max_length=30, verbose_name="رقم الهاتف / الواتساب")
 
     # 2. بيانات المشاركة
-    conference_title = models.CharField(max_length=255, default="مؤتمر جامعة البطانة العلمي - ملتقى جامعات قطاع الوسط", verbose_name="اسم المؤتمر")
-    academic_domain = models.CharField(max_length=30, choices=ACADEMIC_DOMAINS, default='applied', verbose_name="المجال العلمي")
+    conference_title = models.CharField(
+        max_length=255, 
+        default="المؤتمر العلمي الاول لجامعة البطانة: دور البحث العلمي في التنمية المستدامة واعادة الاعمار", 
+        verbose_name="اسم المؤتمر"
+    )
+    academic_domain = models.CharField(max_length=30, choices=ACADEMIC_DOMAINS, default='track_1', verbose_name="المحور العلمي")
     participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='full_paper', verbose_name="نوع المشاركة")
     title = models.CharField(max_length=300, verbose_name="عنوان البحث")
 
@@ -94,8 +100,8 @@ class ConferenceSubmission(models.Model):
     # 4. مسار المتابعة
     status = models.CharField(max_length=35, choices=SUBMISSION_STATUS, default='submitted', verbose_name="حالة الطلب")
 
-    # 5. اجراءات رئيس التحرير (الفحص الاولي)
-    editor_notes = models.TextField(null=True, blank=True, verbose_name="ملاحظات رئيس التحرير")
+    # 5. اجراءات هيئة التحرير (الفحص الاولي)
+    editor_notes = models.TextField(null=True, blank=True, verbose_name="ملاحظات هيئة التحرير")
     editor_checked_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ الفحص الاداري")
     editor_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='editor_managed_submissions', verbose_name="تم الفحص بواسطة رئيس التحرير")
 
