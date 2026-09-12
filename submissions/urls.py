@@ -10,7 +10,7 @@ urlpatterns = [
     path('track/<str:tracking_code>/reupload/', views.reupload_file, name='reupload_file'),
     path('track/<str:tracking_code>/upload-full-paper/', views.upload_full_paper, name='upload_full_paper'),
     
-    # وثائق القبول الرسمية
+    # وثائق القبول الرسمية للمرحلتين
     path('abstract-acceptance/<str:tracking_code>/', views.abstract_acceptance_pass, name='abstract_acceptance_pass'),
     path('acceptance-pass/<str:tracking_code>/', views.acceptance_pass, name='acceptance_pass'),
 
