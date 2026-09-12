@@ -8,7 +8,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
         <div>
             <h4 class="fw-bold text-dark mb-1"><i class="bi bi-award-fill text-warning"></i> لوحة تحكيم وقرارات اللجنة العلمية للمؤتمر</h4>
-            <p class="text-muted small mb-0">تقييم الاوراق المحالة، وضع درجات التحكيم السرية، ورفع التوصيات والتقارير الى هيئة التحرير</p>
+            <p class="text-muted small mb-0">تقييم الملخصات والاوراق المحالة، وضع درجات التحكيم السرية، ورفع التوصيات الى هيئة التحرير</p>
         </div>
         <div>
             <span class="badge bg-warning text-dark fs-6">صلاحية: عضو اللجنة العلمية</span>
@@ -18,7 +18,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-warning border-4">
-                <span class="text-muted small fw-bold">اوراق قيد تحكيم اللجنة العلمية</span>
+                <span class="text-muted small fw-bold">اوراق/ملخصات قيد تحكيم اللجنة</span>
                 <h3 class="fw-bold text-warning mt-1">{{ under_review_count }}</h3>
             </div>
         </div>
@@ -29,15 +29,15 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card card-custom p-3 border-start border-success border-4">
-                <span class="text-muted small fw-bold">ابحاث تم اعتماد قبولها</span>
-                <h3 class="fw-bold text-success mt-1">{{ accepted_count }}</h3>
+            <div class="card card-custom p-3 border-start border-info border-4">
+                <span class="text-muted small fw-bold">ملخصات تم قبولها مبدئيا</span>
+                <h3 class="fw-bold text-info mt-1">{{ abstract_accepted_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card card-custom p-3 border-start border-info border-4">
-                <span class="text-muted small fw-bold">مطلوب تعديلات اكاديمية</span>
-                <h3 class="fw-bold text-info mt-1">{{ revision_count }}</h3>
+            <div class="card card-custom p-3 border-start border-success border-4">
+                <span class="text-muted small fw-bold">ابحاث مقبولة نهائيا للمؤتمر</span>
+                <h3 class="fw-bold text-success mt-1">{{ accepted_count }}</h3>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                         <th>كود البحث</th>
                         <th>الباحث والمؤسسة</th>
                         <th>الكلية والقسم الاكاديمي</th>
-                        <th>عنوان الورقة والمحور</th>
+                        <th>عنوان المشاركة والمحور</th>
                         <th>الملف</th>
                         <th>الدرجة السرية</th>
                         <th>الحالة</th>
@@ -79,6 +79,9 @@
                                 {% else %}
                                     <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">فتح Word</a>
                                 {% endif %}
+                                {% if sub.full_paper_file %}
+                                    <br><a href="{{ sub.full_paper_file.url }}" target="_blank" class="btn btn-sm btn-success mt-1">الورقة الكاملة</a>
+                                {% endif %}
                             </td>
                             <td>
                                 {% if sub.scientific_score %}
@@ -91,6 +94,7 @@
                                 <span class="badge 
                                     {% if sub.status == 'accepted' %}bg-success
                                     {% elif sub.status == 'rejected' %}bg-danger
+                                    {% elif sub.status == 'abstract_accepted' %}bg-info text-dark
                                     {% elif sub.status == 'scientific_evaluated' %}bg-primary
                                     {% elif sub.status == 'revision_required' %}bg-warning text-dark
                                     {% else %}bg-secondary{% endif %}">
@@ -99,7 +103,7 @@
                             </td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-gold px-3" data-bs-toggle="modal" data-bs-target="#reviewModal{{ sub.id }}">
-                                    <i class="bi bi-pencil-square"></i> تحكيم الورقة
+                                    <i class="bi bi-pencil-square"></i> تحكيم المشاركة
                                 </button>
                             </td>
                         </tr>
@@ -117,16 +121,16 @@
                                             <div class="alert alert-light border small mb-3">
                                                 <strong>الباحث:</strong> {{ sub.author_name }} | <strong>الجامعة:</strong> {{ sub.get_university_display }}<br>
                                                 <strong>الكلية والقسم:</strong> {{ sub.faculty }} - {{ sub.department }}<br>
-                                                <strong>عنوان البحث:</strong> {{ sub.title }}
+                                                <strong>عنوان المشاركة:</strong> {{ sub.title }} ({{ sub.get_participation_type_display }})
                                             </div>
 
                                             <div class="row g-3">
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-bold">توصية اللجنة العلمية *</label>
                                                     <select name="recommendation" id="recSelect{{ sub.id }}" class="form-select" onchange="applyTemplate({{ sub.id }})" required>
-                                                        <option value="accept" {% if sub.scientific_recommendation == 'accept' %}selected{% endif %}>توصية بقبول البحث للمشاركة</option>
+                                                        <option value="accept" {% if sub.scientific_recommendation == 'accept' %}selected{% endif %}>توصية بقبول المشاركة / الملخص</option>
                                                         <option value="revise" {% if sub.scientific_recommendation == 'revise' %}selected{% endif %}>توصية بقبول مشروط باجراء تعديلات</option>
-                                                        <option value="reject" {% if sub.scientific_recommendation == 'reject' %}selected{% endif %}>توصية بالاعتذار عن عدم قبول البحث</option>
+                                                        <option value="reject" {% if sub.scientific_recommendation == 'reject' %}selected{% endif %}>توصية بالاعتذار عن عدم قبول المشاركة</option>
                                                     </select>
                                                 </div>
 
@@ -152,7 +156,7 @@
 
                     {% empty %}
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-5">لا توجد اوراق بحثية محالة للجنة العلمية حاليا.</td>
+                            <td colspan="8" class="text-center text-muted py-5">لا توجد مشاركات محالة للجنة العلمية حاليا.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -171,11 +175,11 @@ function applyTemplate(id) {
     if (!select || !textarea) return;
 
     if (select.value === 'accept') {
-        textarea.value = 'توصي اللجنة العلمية بقبول الورقة البحثية للمشاركة في جلسات المؤتمر العلمي الاول لجامعة البطانة لاستيفائها المعايير العلمية والمنهجية.';
+        textarea.value = 'توصي اللجنة العلمية بقبول الملخص البحثي للمشاركة واستيفائه الشروط الاكاديمية، ونوصي بطلب تسليم النسخة الكاملة من البحث.';
     } else if (select.value === 'revise') {
-        textarea.value = 'توصي اللجنة العلمية بقبول الورقة شريطة اجراء التعديلات المنهجية والاكاديمية الموضحة في الملاحظات واعادة تسليم النسخة المعدلة.';
+        textarea.value = 'توصي اللجنة العلمية بقبول الورقة شريطة اجراء التعديلات المنهجية والاكاديمية الموضحة واعادة تسليم النسخة المعدلة.';
     } else if (select.value === 'reject') {
-        textarea.value = 'تعتذر اللجنة العلمية عن قبول الورقة البحثية في الدورة الحالية للمؤتمر لعدم مطابقتها لمحاور وشروط المؤتمر.';
+        textarea.value = 'تعتذر اللجنة العلمية عن قبول المشاركة لعدم مطابقتها لمحاور وشروط المؤتمر العلمي الاول لجامعة البطانة.';
     }
 }
 </script>
