@@ -152,7 +152,6 @@ def track_submission(request):
 
 
 def reupload_file(request, tracking_code):
-    """اعادة رفع الملف التالف"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
 
     if submission.status not in ['defective_file', 'revision_required']:
@@ -179,7 +178,6 @@ def reupload_file(request, tracking_code):
 
 
 def upload_full_paper(request, tracking_code):
-    """المرحلة الثانية: رفع الورقة العلمية الكاملة بعد قبول الملخص المبدئي"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
 
     if submission.status != 'abstract_accepted':
@@ -203,7 +201,6 @@ def upload_full_paper(request, tracking_code):
 
 
 def abstract_acceptance_pass(request, tracking_code):
-    """المرحلة الاولى: اشعار قبول الملخص المبدئي القابل للطباعة"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
     if submission.status not in ['abstract_accepted', 'full_paper_submitted', 'accepted']:
         messages.error(request, 'لم يتم اصدار اشعار قبول الملخص لهذا البحث بعد.')
@@ -212,7 +209,6 @@ def abstract_acceptance_pass(request, tracking_code):
 
 
 def acceptance_pass(request, tracking_code):
-    """المرحلة الثانية: اشعار القبول النهائي وبطاقة دخول المؤتمر الرسمية"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
     if submission.status != 'accepted':
         messages.error(request, 'لا يمكن اصدار بطاقة دخول المؤتمر لبحث لم يتم قبوله نهائيا بعد.')
