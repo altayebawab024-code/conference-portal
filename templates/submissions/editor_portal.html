@@ -8,7 +8,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
         <div>
             <h4 class="fw-bold text-primary mb-1"><i class="bi bi-kanban-fill"></i> لوحة تحكم رئيس التحرير (الفحص الاداري والاعتماد النهائي)</h4>
-            <p class="text-muted small mb-0">مراجعة ملفات الابحاث الواردة، احالتها للجنة العلمية، واعتماد القرارات الصادرة للباحثين</p>
+            <p class="text-muted small mb-0">مراجعة ملفات الملخصات والابحاث، احالتها للجنة العلمية، واعتماد اشعارات القبول بالمرحلتين</p>
         </div>
         <div>
             <span class="badge bg-dark fs-6">صلاحية: رئيس التحرير</span>
@@ -18,25 +18,25 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-warning border-4">
-                <span class="text-muted small fw-bold">ابحاث جديدة بانتظار الفحص الاداري</span>
+                <span class="text-muted small fw-bold">ملخصات/اوراق جديدة بانتظار الفحص</span>
                 <h3 class="fw-bold text-warning mt-1">{{ pending_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-info border-4">
-                <span class="text-muted small fw-bold">ابحاث قيد تحكيم اللجنة العلمية</span>
+                <span class="text-muted small fw-bold">قيد تحكيم اللجنة العلمية</span>
                 <h3 class="fw-bold text-info mt-1">{{ under_review_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-primary border-4">
-                <span class="text-muted small fw-bold">ابحاث انتهى تحكيمها وبانتظار اعتمادك</span>
-                <h3 class="fw-bold text-primary mt-1">{{ evaluated_count }}</h3>
+                <span class="text-muted small fw-bold">تم قبول الملخص (بانتظار الورقة الكاملة)</span>
+                <h3 class="fw-bold text-primary mt-1">{{ abstract_accepted_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-success border-4">
-                <span class="text-muted small fw-bold">ابحاث تم اعتماد قبولها نهائيا</span>
+                <span class="text-muted small fw-bold">ابحاث مقبولة نهائيا (بطاقة الدخول)</span>
                 <h3 class="fw-bold text-success mt-1">{{ accepted_count }}</h3>
             </div>
         </div>
@@ -80,7 +80,7 @@
                         <th>كود التتبع</th>
                         <th>الباحث والمؤسسة</th>
                         <th>الكلية والقسم الاكاديمي</th>
-                        <th>عنوان الورقة والمحور</th>
+                        <th>عنوان المشاركة ونوعها</th>
                         <th>الملف</th>
                         <th>الحالة</th>
                         <th>تقرير اللجنة العلمية</th>
@@ -101,7 +101,7 @@
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">{{ sub.title|truncatechars:40 }}</div>
-                                <span class="text-muted small">{{ sub.get_academic_domain_display|truncatechars:35 }}</span>
+                                <span class="badge bg-secondary small">{{ sub.get_participation_type_display }}</span>
                             </td>
                             <td>
                                 {% if sub.is_pdf %}
@@ -109,16 +109,21 @@
                                 {% else %}
                                     <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">Word</a>
                                 {% endif %}
+                                {% if sub.full_paper_file %}
+                                    <br><span class="badge bg-success mt-1">الورقة الكاملة</span>
+                                {% endif %}
                             </td>
                             <td>
                                 <span class="badge 
                                     {% if sub.status == 'submitted' %}bg-warning text-dark
                                     {% elif sub.status == 'defective_file' %}bg-danger
                                     {% elif sub.status == 'scientific_evaluated' %}bg-primary
+                                    {% elif sub.status == 'abstract_accepted' %}bg-info text-dark
+                                    {% elif sub.status == 'full_paper_submitted' %}bg-warning text-dark
                                     {% elif sub.status == 'accepted' %}bg-success
                                     {% elif sub.status == 'rejected' %}bg-danger
                                     {% elif sub.status == 'revision_required' %}bg-warning text-dark
-                                    {% else %}bg-info text-dark{% endif %}">
+                                    {% else %}bg-secondary{% endif %}">
                                     {{ sub.get_status_display }}
                                 </span>
                             </td>
@@ -126,18 +131,18 @@
                                 {% if sub.scientific_decision_notes %}
                                     <small class="d-block text-dark fw-semibold">{{ sub.scientific_decision_notes|truncatechars:45 }}</small>
                                     {% if sub.scientific_score %}
-                                        <span class="badge bg-dark small">الدرجة الداخلية: {{ sub.scientific_score }}/100</span>
+                                        <span class="badge bg-dark small">الدرجة السرية: {{ sub.scientific_score }}/100</span>
                                     {% endif %}
                                 {% else %}
                                     <span class="text-muted small">-</span>
                                 {% endif %}
                             </td>
                             <td>
-                                {% if sub.status == 'submitted' or sub.status == 'defective_file' %}
+                                {% if sub.status == 'submitted' or sub.status == 'defective_file' or sub.status == 'full_paper_submitted' %}
                                     <button type="button" class="btn btn-sm btn-warning fw-bold" data-bs-toggle="modal" data-bs-target="#initialModal{{ sub.id }}">
                                         فحص واحالة
                                     </button>
-                                {% elif sub.status == 'scientific_evaluated' or sub.status == 'accepted' or sub.status == 'revision_required' or sub.status == 'rejected' %}
+                                {% elif sub.status == 'scientific_evaluated' or sub.status == 'abstract_accepted' or sub.status == 'accepted' or sub.status == 'revision_required' or sub.status == 'rejected' %}
                                     <button type="button" class="btn btn-sm btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#finalModal{{ sub.id }}">
                                         اعتماد القرار
                                     </button>
@@ -147,6 +152,7 @@
                             </td>
                         </tr>
 
+                        <!-- نافذة الفحص الاداري والاحالة -->
                         <div class="modal fade" id="initialModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -179,33 +185,35 @@
                             </div>
                         </div>
 
+                        <!-- نافذة اعتماد القرار النهائي بالمرحلتين -->
                         <div class="modal fade" id="finalModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <form method="post" action="{% url 'editor_final_decision' sub.id %}">
                                         {% csrf_token %}
                                         <div class="modal-header bg-dark text-white">
-                                            <h6 class="modal-title fw-bold">اعتماد واصدار القرار النهائي للباحث: {{ sub.tracking_code }}</h6>
+                                            <h6 class="modal-title fw-bold">اعتماد واصدار القرار الرسمي للباحث: {{ sub.tracking_code }}</h6>
                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="alert alert-info small mb-3">
                                                 <strong>تقرير وتوصية اللجنة العلمية:</strong> {{ sub.scientific_decision_notes|default:"لا توجد ملاحظات" }}<br>
-                                                <strong>درجة التحكيم الداخلية:</strong> {{ sub.scientific_score|default:"غير محددة" }}/100
+                                                <strong>درجة التحكيم السرية:</strong> {{ sub.scientific_score|default:"غير محددة" }}/100
                                             </div>
 
                                             <div class="row g-3">
                                                 <div class="col-md-6">
-                                                    <label class="form-label small fw-bold">القرار النهائي المعتمد للباحث *</label>
+                                                    <label class="form-label small fw-bold">القرار المعتمد للباحث *</label>
                                                     <select name="final_decision" class="form-select" required>
-                                                        <option value="accept" {% if sub.status == 'accepted' or sub.scientific_recommendation == 'accept' %}selected{% endif %}>اعتماد قبول البحث واصدار بطاقة الدخول</option>
-                                                        <option value="revise" {% if sub.status == 'revision_required' or sub.scientific_recommendation == 'revise' %}selected{% endif %}>طلب اجراء تعديلات اكاديمية</option>
-                                                        <option value="reject" {% if sub.status == 'rejected' or sub.scientific_recommendation == 'reject' %}selected{% endif %}>اعتذار عن عدم قبول البحث</option>
+                                                        <option value="abstract_accept" {% if sub.status == 'abstract_accepted' %}selected{% endif %}>المرحلة 1: قبول الملخص المبدئي (وطلب تسليم الورقة الكاملة)</option>
+                                                        <option value="final_accept" {% if sub.status == 'accepted' %}selected{% endif %}>المرحلة 2: قبول البحث نهائيا واصدار بطاقة دخول المؤتمر</option>
+                                                        <option value="revise" {% if sub.status == 'revision_required' %}selected{% endif %}>طلب اجراء تعديلات اكاديمية</option>
+                                                        <option value="reject" {% if sub.status == 'rejected' %}selected{% endif %}>اعتذار عن عدم قبول المشاركة</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-12">
-                                                    <label class="form-label small fw-bold">نص الافادة الرسمية الصادرة للباحث:</label>
-                                                    <textarea name="final_decision_notes" class="form-control" rows="4" placeholder="اكتب نص الافادة المعتمدة التي ستظهر للباحث في صفحة التتبع...">{{ sub.final_decision_notes|default:sub.scientific_decision_notes }}</textarea>
+                                                    <label class="form-label small fw-bold">نص الافادة الرسمية الصادرة للباحث في صفحة التتبع:</label>
+                                                    <textarea name="final_decision_notes" class="form-control" rows="4" placeholder="اكتب نص الافادة المعتمدة...">{{ sub.final_decision_notes|default:sub.scientific_decision_notes }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
