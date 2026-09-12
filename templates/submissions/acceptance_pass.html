@@ -98,7 +98,15 @@
                 </tr>
                 <tr>
                     <th class="table-light">تاريخ اعتماد القرار</th>
-                    <td>{{ submission.final_decision_at|date:"Y-m-d"|default:submission.updated_at|date:"Y-m-d" }}</td>
+                    <td class="fw-bold text-dark">
+                        {% if submission.final_decision_at %}
+                            {{ submission.final_decision_at|date:"Y-m-d" }}
+                        {% elif submission.updated_at %}
+                            {{ submission.updated_at|date:"Y-m-d" }}
+                        {% else %}
+                            {{ submission.created_at|date:"Y-m-d" }}
+                        {% endif %}
+                    </td>
                 </tr>
             </table>
 
