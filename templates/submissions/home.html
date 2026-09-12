@@ -3,6 +3,23 @@
 
 {% block title %}الرئيسية - المؤتمر العلمي الاول لجامعة البطانة{% endblock %}
 
+{% block extra_css %}
+<style>
+    .countdown-box {
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(212,175,55,0.4);
+        border-radius: 10px;
+        padding: 10px;
+        min-width: 75px;
+    }
+    .countdown-num {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #f1c40f;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
 
@@ -12,18 +29,30 @@
         </div>
     {% endif %}
 
-    <!-- Hero Header -->
+    <!-- Hero Header الفاخر -->
     <div class="card card-custom p-5 mb-4 text-white text-center" style="background: linear-gradient(135deg, #091e3a 0%, #10375c 70%, #001f54 100%);">
         <div class="py-2">
-            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-3 rounded-circle p-1 bg-white shadow" style="width: 90px; height: 90px; object-fit: contain;">
+            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-3 rounded-circle p-1 bg-white shadow" style="width: 95px; height: 95px; object-fit: contain;">
             <br>
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 fs-6">جامعة البطانة - عمادة البحث العلمي والنشر والترجمة</span>
             <h1 class="display-6 fw-bold mb-2">المؤتمر العلمي الاول لجامعة البطانة</h1>
             <h4 class="text-warning fw-bold mb-3">بعنوان: دور البحث العلمي في التنمية المستدامة واعادة الاعمار</h4>
             <p class="lead text-light fst-italic mb-4">"بالعلم نعيد البناء، وبالمعرفة نصنع المستقبل"</p>
+
+            <!-- العداد التنازلي المباشر لموعد تسليم الملخصات -->
+            <div class="mb-4">
+                <small class="text-warning fw-bold d-block mb-2">الزمن المتبقي لانتهاء موعد استلام الملخصات (10 اكتوبر 2026م):</small>
+                <div class="d-flex justify-content-center gap-2" id="abstractCountdown">
+                    <div class="countdown-box"><div class="countdown-num" id="cd-days">--</div><small class="d-block text-white">يوم</small></div>
+                    <div class="countdown-box"><div class="countdown-num" id="cd-hours">--</div><small class="d-block text-white">ساعة</small></div>
+                    <div class="countdown-box"><div class="countdown-num" id="cd-mins">--</div><small class="d-block text-white">دقيقة</small></div>
+                    <div class="countdown-box"><div class="countdown-num" id="cd-secs">--</div><small class="d-block text-white">ثانية</small></div>
+                </div>
+            </div>
+
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 <a href="{% url 'submit_paper' %}" class="btn btn-gold btn-lg px-4 py-3 shadow">
-                    <i class="bi bi-cloud-arrow-up-fill me-2"></i> تقديم بحث او مشروع جديد
+                    <i class="bi bi-cloud-arrow-up-fill me-2"></i> تقديم ملخص بحثي جديد
                 </a>
                 <a href="{% url 'track_submission' %}" class="btn btn-outline-light btn-lg px-4 py-3">
                     <i class="bi bi-search me-2"></i> تتبع حالة بحثك بكود التتبع
@@ -32,18 +61,18 @@
         </div>
     </div>
 
-    <!-- التواريخ المهمة للمؤتمر -->
+    <!-- جدول التواريخ المهمة -->
     <div class="row g-3 mb-4 text-center">
         <div class="col-md-3">
-            <div class="card card-custom p-3 border-bottom border-primary border-4 h-100">
+            <div class="card card-custom p-3 border-bottom border-warning border-4 h-100">
                 <span class="text-muted small fw-bold">اخر موعد لاستلام الملخصات</span>
-                <h5 class="fw-bold text-primary mt-1">10 اكتوبر 2026م</h5>
+                <h5 class="fw-bold text-dark mt-1">10 اكتوبر 2026م</h5>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card card-custom p-3 border-bottom border-warning border-4 h-100">
-                <span class="text-muted small fw-bold">اشعار القبول</span>
-                <h5 class="fw-bold text-dark mt-1">20 اكتوبر 2026م</h5>
+            <div class="card card-custom p-3 border-bottom border-primary border-4 h-100">
+                <span class="text-muted small fw-bold">اشعار قبول الملخصات</span>
+                <h5 class="fw-bold text-primary mt-1">20 اكتوبر 2026م</h5>
             </div>
         </div>
         <div class="col-md-3">
@@ -62,7 +91,7 @@
 
     <!-- المحاور العلمية الرسمية -->
     <div class="card card-custom p-4 mb-4">
-        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المحاور العلمية للمؤتمر</h4>
+        <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المحاور العلمية المعتمدة للمؤتمر</h4>
         <div class="row g-3">
             {% for code, label in academic_domains %}
                 <div class="col-md-12">
@@ -75,7 +104,7 @@
         </div>
     </div>
 
-    <!-- شروط وضوابط المشاركة وموجهات الكتابة -->
+    <!-- شروط وضوابط المشاركة -->
     <div class="row g-4 mb-4">
         <div class="col-md-6">
             <div class="card card-custom p-4 h-100">
@@ -105,11 +134,486 @@
         </div>
     </div>
 
+    <!-- الاسئلة الشائعة -->
+    <div class="card card-custom p-4 mb-4">
+        <h4 class="fw-bold text-dark mb-3 text-center"><i class="bi bi-question-circle-fill text-primary"></i> الاسئلة الشائعة للباحثين</h4>
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item border-0 mb-2 rounded shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        ما هي المرحلة الاولى للتقديم على المؤتمر؟
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body small text-muted">
+                        المرحلة الاولى هي رفع ملخص بحثي (Abstract) في حدود صفحة واحدة يوضح فكرة ومنهجية البحث قبل موعد 10 اكتوبر 2026م.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-0 mb-2 rounded shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        متى يتم تسليم الورقة العلمية الكاملة (Full Paper)؟
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body small text-muted">
+                        بعد تحكيم الملخصات واصدار اشعار قبول الملخص بتاريخ 20 اكتوبر 2026م، يتاح للباحث المقبول رفع نسخته الكاملة عبر صفحة التتبع قبل 10 نوفمبر 2026م.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-0 rounded shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        كيف احصل على بطاقة وتصريح دخول المؤتمر الرسمي؟
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body small text-muted">
+                        بمجرد اعتماد الورقة العلمية الكاملة من هيئة التحرير، يظهر زر طباعة بطاقة دخول المؤتمر في صفحة التتبع الخاصة بالباحث لطباعتها وحضور الجلسات.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- قيادة المؤتمر -->
     <div class="card card-custom p-4 text-center bg-light">
         <h6 class="fw-bold text-dark mb-1">رئيس اللجنة العلمية للمؤتمر:</h6>
         <h5 class="fw-bold text-primary mb-0">البروفيسور / سمية خليفة محمد المهدي</h5>
     </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// كود تشغيل العداد التنازلي لموعد 10 اكتوبر 2026م
+function runCountdown() {
+    const targetDate = new Date('October 10, 2026 23:59:59').getTime();
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+
+    if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('cd-days').innerText = days;
+        document.getElementById('cd-hours').innerText = hours;
+        document.getElementById('cd-mins').innerText = mins;
+        document.getElementById('cd-secs').innerText = secs;
+    }
+}
+setInterval(runCountdown, 1000);
+runCountdown();
+</script>
+{% endblock %}
+
+6️⃣ ملف templates/submissions/submit.html
+
+{% extends 'submissions/base.html' %}
+{% load static %}
+
+{% block title %}استمارة تقديم ورقة / ملخص بحثي{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5" style="max-width: 900px;">
+    
+    <div class="card card-custom p-4 p-md-5">
+        
+        <div class="text-center mb-4 pb-3 border-bottom">
+            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الاول لجامعة البطانة</span>
+            <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / ملخص بحثي</h3>
+            <p class="text-muted small">عمادة البحث العلمي والنشر والترجمة - ملتقى جامعات قطاع الوسط</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="p-3 bg-light rounded-3 border mb-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-badge-fill text-primary"></i> 1. بيانات الباحث والمؤلف الرئيسي</h5>
+                
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <label class="form-label small fw-bold">الاسم الرباعي للباحث *</label>
+                        <input type="text" name="author_name" class="form-control" required placeholder="مثال: د. محمد عبد الرحمن الطيب">
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold">الدرجة العلمية / الرتبة *</label>
+                        <select name="academic_degree" class="form-select" required>
+                            {% for code, label in academic_degrees %}
+                                <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label small fw-bold text-primary">الجامعة / المؤسسة الاكاديمية التابع لها *</label>
+                        <select name="university" class="form-select border-primary fw-semibold" required>
+                            {% for code, label in universities %}
+                                <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">الكلية *</label>
+                        <input type="text" name="faculty" class="form-control" required placeholder="مثال: كلية التربية / كلية الهندسة">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">القسم الاكاديمي *</label>
+                        <input type="text" name="department" class="form-control" required placeholder="مثال: قسم المناهج / قسم الفيزياء">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">البريد الالكتروني للباحث *</label>
+                        <input type="email" name="email" class="form-control" required placeholder="name@example.com">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">رقم الهاتف / الواتساب للتواصل *</label>
+                        <input type="text" name="phone" class="form-control" required placeholder="مثال: 0912345678">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-light rounded-3 border mb-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-journal-bookmark-fill text-primary"></i> 2. بيانات البحث والمحور الاكاديمي</h5>
+
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold">المحور العلمي للمؤتمر *</label>
+                        <select name="academic_domain" class="form-select" required>
+                            {% for code, label in academic_domains %}
+                                <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label small fw-bold text-primary">نوع المشاركة *</label>
+                        <select name="participation_type" class="form-select border-primary fw-semibold" required>
+                            {% for code, label in participation_types %}
+                                <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">عنوان البحث او الملخص العلمي كاملا *</label>
+                        <input type="text" name="title" class="form-control" required placeholder="ادخل العنوان الاكاديمي الدقيق">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-white rounded-3 border border-2 border-primary mb-4 text-center">
+                <i class="bi bi-cloud-arrow-up-fill text-primary fs-1 mb-2 d-block"></i>
+                <h5 class="fw-bold text-dark mb-1">ارفاق ملف الملخص / البحث *</h5>
+                <p class="text-muted small mb-3">الصيغ المقبولة: <strong>PDF او Word (.docx, .doc)</strong> بحد اقصى 15 ميجابايت</p>
+                
+                <div class="col-md-8 mx-auto">
+                    <input type="file" name="file" class="form-control form-control-lg" accept=".pdf,.doc,.docx" required>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-gold btn-lg py-3 fs-5 shadow">
+                    <i class="bi bi-send-check-fill me-2"></i> ارسال المشاركة وتوليد كود التتبع
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
+7️⃣ ملف templates/submissions/success.html
+
+{% extends 'submissions/base.html' %}
+{% load static %}
+
+{% block title %}اشعار استلام المشاركة - {{ submission.tracking_code }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        body * { visibility: hidden; }
+        .receipt-box, .receipt-box * { visibility: visible; }
+        .receipt-box {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: 2px solid #000 !important;
+            box-shadow: none !important;
+        }
+        .no-print { display: none !important; }
+    }
+    .receipt-box {
+        background-color: #ffffff;
+        border: 3px double #10375c;
+        border-radius: 12px;
+        padding: 40px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5" style="max-width: 850px;">
+
+    <div class="text-center mb-3 no-print">
+        <div class="avatar bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-2" style="width: 70px; height: 70px;">
+            <i class="bi bi-check-lg fs-1"></i>
+        </div>
+        <h3 class="fw-bold text-success mb-1">تم استلام مشاركتك بنجاح</h3>
+        <p class="text-muted small">احفظ كود التتبع ادناه لمتابعة حالة تحكيم بحثك في اي وقت</p>
+    </div>
+
+    <div class="receipt-box shadow mb-4">
+        
+        <div class="text-center pb-3 border-bottom border-2 border-dark mb-4">
+            <div class="d-flex justify-content-between align-items-center px-2 mb-2">
+                <div class="text-start small fw-bold">
+                    جمهورية السودان<br>
+                    وزارة التعليم العالي والبحث العلمي<br>
+                    <strong>جامعة البطانة</strong><br>
+                    عمادة البحث العلمي والنشر والترجمة
+                </div>
+                <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" style="width: 75px; height: 75px; object-fit: contain;">
+                <div class="text-end small fw-bold">
+                    المؤتمر العلمي الاول لجامعة البطانة<br>
+                    ملتقى جامعات قطاع الوسط<br>
+                    اللجنة العلمية للمؤتمر
+                </div>
+            </div>
+            <span class="badge bg-dark text-white px-4 py-2 mt-1 fs-6">اشعار استلام رسمي لمعاملة بحثية</span>
+        </div>
+
+        <div class="alert alert-warning border border-warning text-center py-3 mb-4">
+            <span class="text-muted small fw-bold d-block mb-1">كود التتبع والمتابعة الخاص بالباحث:</span>
+            <h2 class="fw-bold text-dark mb-0 letter-spacing-1">{{ submission.tracking_code }}</h2>
+        </div>
+
+        <table class="table table-bordered align-middle small mb-4">
+            <tr>
+                <th class="table-light w-25">اسم الباحث</th>
+                <td class="fw-bold text-dark">{{ submission.author_name }} ({{ submission.get_academic_degree_display }})</td>
+            </tr>
+            <tr>
+                <th class="table-light">الجامعة</th>
+                <td class="fw-bold text-primary">{{ submission.get_university_display }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">الكلية والقسم</th>
+                <td>{{ submission.faculty }} - {{ submission.department }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">عنوان المشاركة</th>
+                <td class="fw-bold text-dark">{{ submission.title }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">المحور العلمي</th>
+                <td>{{ submission.get_academic_domain_display }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">نوع المشاركة</th>
+                <td>{{ submission.get_participation_type_display }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">تاريخ ووقت التقديم</th>
+                <td>{{ submission.created_at|date:"Y-m-d H:i:s" }}</td>
+            </tr>
+            <tr>
+                <th class="table-light">حالة الطلب الحالية</th>
+                <td><span class="badge bg-info text-dark">{{ submission.get_status_display }}</span></td>
+            </tr>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-end pt-3 border-top">
+            <div class="small text-muted">
+                <em>صدر اليا عبر بوابة المؤتمر العلمي الاول لجامعة البطانة</em>
+            </div>
+            <div class="text-center">
+                <div class="text-success fw-bold small mb-1">الختم الالكتروني معتمد</div>
+                <div class="border border-success text-success px-3 py-1 rounded small fw-bold">جامعة البطانة - عمادة البحث العلمي</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-center gap-3 no-print">
+        <button onclick="window.print()" class="btn btn-dark btn-lg px-4">
+            <i class="bi bi-printer-fill me-2"></i> طباعة اشعار الاستلام
+        </button>
+        <a href="{% url 'track_submission' %}?q={{ submission.tracking_code }}" class="btn btn-primary btn-lg px-4">
+            <i class="bi bi-search me-2"></i> تتبع مسار البحث الان
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg px-4">
+            الرئيسية
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+8️⃣ ملف templates/submissions/track.html (شاشة التتبع الذكية بالمرحلتين)
+
+{% extends 'submissions/base.html' %}
+
+{% block title %}تتبع حالة المشاركة العلمية{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5" style="max-width: 900px;">
+
+    <div class="card card-custom p-4 p-md-5 mb-4 text-center">
+        <h4 class="fw-bold text-primary mb-2"><i class="bi bi-search"></i> تتبع حالة البحث او المشروع العلمي</h4>
+        <p class="text-muted small mb-4">ادخل كود التتبع الذي استلمته عند التقديم (او البريد الالكتروني / رقم الهاتف)</p>
+
+        <form method="get" action="{% url 'track_submission' %}" class="row g-2 justify-content-center">
+            <div class="col-md-7">
+                <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-lg text-center fw-bold" placeholder="مثال: CONF-2026-83419" required>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-gold btn-lg w-100 fw-bold">بحث وتتبع</button>
+            </div>
+        </form>
+    </div>
+
+    {% if submission %}
+        <div class="card card-custom p-4 p-md-5 mb-4">
+            
+            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 border-bottom mb-4">
+                <div>
+                    <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-1">{{ submission.tracking_code }}</span>
+                    <h4 class="fw-bold text-dark mb-0">{{ submission.title }}</h4>
+                    <p class="text-muted small mb-0">{{ submission.author_name }} | {{ submission.get_university_display }} ({{ submission.faculty }} - {{ submission.department }})</p>
+                </div>
+                <div>
+                    <span class="badge 
+                        {% if submission.status == 'accepted' or submission.status == 'abstract_accepted' %}bg-success
+                        {% elif submission.status == 'rejected' or submission.status == 'defective_file' %}bg-danger
+                        {% elif submission.status == 'revision_required' %}bg-warning text-dark
+                        {% else %}bg-primary{% endif %} fs-6 px-3 py-2">
+                        {{ submission.get_status_display }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- شريط التقدم المرئي الذكي للمرحلتين -->
+            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-bezier2"></i> مسار تقييم وتحكيم البحث:</h6>
+            <div class="d-flex flex-wrap justify-content-between align-items-center text-center gap-2 p-3 bg-light rounded-3 mb-4">
+                <span class="badge bg-success p-2 small">1. استلام الملخص</span>
+                <i class="bi bi-arrow-left text-muted"></i>
+                <span class="badge {% if submission.status != 'submitted' and submission.status != 'defective_file' %}bg-success{% elif submission.status == 'defective_file' %}bg-danger{% else %}bg-warning text-dark{% endif %} p-2 small">2. الفحص الاداري</span>
+                <i class="bi bi-arrow-left text-muted"></i>
+                <span class="badge {% if submission.status in 'abstract_accepted,full_paper_submitted,accepted' %}bg-success{% elif submission.status == 'under_scientific_review' %}bg-warning text-dark{% else %}bg-secondary{% endif %} p-2 small">3. قبول الملخص</span>
+                <i class="bi bi-arrow-left text-muted"></i>
+                <span class="badge {% if submission.status in 'full_paper_submitted,accepted' %}bg-success{% else %}bg-secondary{% endif %} p-2 small">4. تسليم الورقة الكاملة</span>
+                <i class="bi bi-arrow-left text-muted"></i>
+                <span class="badge {% if submission.status == 'accepted' %}bg-success{% else %}bg-secondary{% endif %} p-2 small">5. بطاقة دخول المؤتمر</span>
+            </div>
+
+            <!-- المرحلة الاولى: قبول الملخص وطلب تسليم الورقة الكاملة -->
+            {% if submission.status == 'abstract_accepted' %}
+                <div class="alert alert-success p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> مبارك! تم قبول ملخصكم البحثي مبدئيا</h5>
+                    <p class="mb-3 text-dark">
+                        {{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة واللجنة العلمية افادتكم بقبول ملخصكم البحثي، يرجى تسليم النسخة الكاملة من البحث في موعد اقصاه 10 نوفمبر 2026م." }}
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <a href="{% url 'abstract_acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-outline-success fw-bold">
+                            <i class="bi bi-printer-fill me-1"></i> طباعة اشعار قبول الملخص المبدئي
+                        </a>
+                    </div>
+
+                    <!-- نموذج رفع الورقة العلمية الكاملة -->
+                    <div class="bg-white p-4 rounded-3 border border-2 border-primary">
+                        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-cloud-arrow-up-fill"></i> رفع وتسليم الورقة العلمية الكاملة (المرحلة الثانية):</h6>
+                        <p class="small text-muted mb-3">يرجى رفع ملف البحث الكامل (Word او PDF) بحجم لا يتجاوز 15 ميجابايت قبل 10 نوفمبر 2026م.</p>
+                        
+                        <form method="post" action="{% url 'upload_full_paper' submission.tracking_code %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="file" name="full_paper_file" class="form-control" accept=".pdf,.doc,.docx" required>
+                                <button type="submit" class="btn btn-primary fw-bold px-4">تسليم الورقة الكاملة الان</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- حالة تسليم الورقة الكاملة وبانتظار الاعتماد النهائي -->
+            {% if submission.status == 'full_paper_submitted' %}
+                <div class="alert alert-info p-4 mb-4">
+                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-clock-history"></i> تم استلام ورقتكم العلمية الكاملة بنجاح</h5>
+                    <p class="mb-0 text-dark">
+                        الورقة قيد المراجعة والتحكيم النهائي من اللجنة العلمية، وسيتم اصدار بطاقة دخول المؤتمر فور انتهاء الاعتماد.
+                    </p>
+                </div>
+            {% endif %}
+
+            <!-- المرحلة الثانية: القبول النهائي وبطاقة الدخول -->
+            {% if submission.status == 'accepted' %}
+                <div class="alert alert-success p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> تهانينا! تم قبول البحث كاملا للمشاركة في المؤتمر</h5>
+                    <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة افادتكم باعتماد قبول ورقتكم العلمية للمشاركة في جلسات المؤتمر المنعقدة بتاريخ 26 و 27 ديسمبر 2026م." }}</p>
+                    
+                    <div class="text-center pt-3 border-top border-success">
+                        <a href="{% url 'acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-success btn-lg px-4 fw-bold shadow">
+                            <i class="bi bi-printer-fill me-2"></i> طباعة اشعار القبول النهائي وبطاقة دخول المؤتمر
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if submission.status == 'revision_required' %}
+                <div class="alert alert-warning p-4 mb-4">
+                    <h5 class="fw-bold text-dark mb-2"><i class="bi bi-pencil-square"></i> افادة هيئة التحرير: مطلوب اجراء تعديلات اكاديمية</h5>
+                    <p class="mb-3">{{ submission.final_decision_notes|default:submission.scientific_decision_notes }}</p>
+                    
+                    <form method="post" action="{% url 'reupload_file' submission.tracking_code %}" enctype="multipart/form-data" class="bg-white p-3 rounded border">
+                        {% csrf_token %}
+                        <label class="form-label small fw-bold text-dark">رفع النسخة المعدلة (Word او PDF):</label>
+                        <div class="input-group">
+                            <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx" required>
+                            <button type="submit" class="btn btn-warning fw-bold">تسليم النسخة المعدلة</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+
+            {% if submission.status == 'rejected' %}
+                <div class="alert alert-danger p-4">
+                    <h5 class="fw-bold text-danger mb-2"><i class="bi bi-x-circle-fill"></i> افادة هيئة المؤتمر: اعتذار</h5>
+                    <p class="mb-0">{{ submission.final_decision_notes|default:"نعتذر عن عدم قبول البحث في الدورة الحالية للمؤتمر، مع خالص الشكر والتقدير لاهتمامكم ومشاركتكم." }}</p>
+                </div>
+            {% endif %}
+
+            {% if submission.status == 'defective_file' %}
+                <div class="alert alert-danger p-4 mb-4">
+                    <h5 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle-fill"></i> ملاحظة هيئة التحرير: الملف غير صالح</h5>
+                    <p class="mb-3">{{ submission.editor_notes|default:"الملف المرفوع فارغ او تالف، يرجى اعادة رفع ملف سليم." }}</p>
+                    
+                    <form method="post" action="{% url 'reupload_file' submission.tracking_code %}" enctype="multipart/form-data" class="bg-white p-3 rounded border">
+                        {% csrf_token %}
+                        <label class="form-label small fw-bold text-dark">اختر ملف البحث السليم (Word او PDF):</label>
+                        <div class="input-group">
+                            <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx" required>
+                            <button type="submit" class="btn btn-danger fw-bold">اعادة الرفع الان</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+
+        </div>
+    {% endif %}
 
 </div>
 {% endblock %}
