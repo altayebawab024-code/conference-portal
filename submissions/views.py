@@ -48,7 +48,6 @@ def scientific_required(view_func):
 
 @login_required
 def role_based_redirect(request):
-    """توجيه المستخدم بعد تسجيل الدخول حسب دوره"""
     if request.user.username in ['editor', 'manager'] or request.user.groups.filter(name='Editors').exists():
         return redirect('editor_portal')
     elif request.user.username == 'scientific' or request.user.groups.filter(name='ScientificCommittee').exists():
@@ -59,7 +58,7 @@ def role_based_redirect(request):
 
 
 # -------------------------------------------------------------
-# بوابات الباحثين
+# بوابات الباحثين العامة
 # -------------------------------------------------------------
 def public_home(request):
     total_submissions = ConferenceSubmission.objects.count()
@@ -92,7 +91,7 @@ def submit_paper(request):
         uploaded_file = request.FILES.get('file')
 
         if not all([author_name, academic_degree, university, faculty, department, email, phone, academic_domain, participation_type, title, uploaded_file]):
-            messages.error(request, 'يرجى تعبئة جميع الحقول المطلوبة وارفاق ملف البحث.')
+            messages.error(request, 'يرجى تعبئة جميع الحقول المطلوبة وارفاق ملف البحث او الملخص.')
             return redirect('submit_paper')
 
         submission = ConferenceSubmission(
@@ -153,6 +152,7 @@ def track_submission(request):
 
 
 def reupload_file(request, tracking_code):
+    """اعادة رفع الملف التالف"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
 
     if submission.status not in ['defective_file', 'revision_required']:
@@ -178,10 +178,44 @@ def reupload_file(request, tracking_code):
     return redirect(f'/track/?q={submission.tracking_code}')
 
 
+def upload_full_paper(request, tracking_code):
+    """المرحلة الثانية: رفع الورقة العلمية الكاملة بعد قبول الملخص المبدئي"""
+    submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
+
+    if submission.status != 'abstract_accepted':
+        messages.error(request, 'لا يمكن رفع الورقة الكاملة الا بعد قبول الملخص المبدئي.')
+        return redirect('track_submission')
+
+    if request.method == 'POST' and request.FILES.get('full_paper_file'):
+        submission.full_paper_file = request.FILES.get('full_paper_file')
+        submission.file = request.FILES.get('full_paper_file')
+        submission.status = 'full_paper_submitted'
+        submission.editor_notes = 'تم تسليم الورقة العلمية الكاملة من قبل الباحث وبانتظار الاحالة للتحكيم النهائي.'
+
+        try:
+            submission.full_clean()
+            submission.save()
+            messages.success(request, 'تم تسليم ورقتكم العلمية الكاملة بنجاح! سيتم تحكيمها واصدار بطاقة دخول المؤتمر قريبا.')
+        except ValidationError as e:
+            messages.error(request, ' '.join(sum(e.message_dict.values(), [])))
+
+    return redirect(f'/track/?q={submission.tracking_code}')
+
+
+def abstract_acceptance_pass(request, tracking_code):
+    """المرحلة الاولى: اشعار قبول الملخص المبدئي القابل للطباعة"""
+    submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
+    if submission.status not in ['abstract_accepted', 'full_paper_submitted', 'accepted']:
+        messages.error(request, 'لم يتم اصدار اشعار قبول الملخص لهذا البحث بعد.')
+        return redirect('track_submission')
+    return render(request, 'submissions/abstract_acceptance_pass.html', {'submission': submission})
+
+
 def acceptance_pass(request, tracking_code):
+    """المرحلة الثانية: اشعار القبول النهائي وبطاقة دخول المؤتمر الرسمية"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
     if submission.status != 'accepted':
-        messages.error(request, 'لا يمكن اصدار بطاقة دخول المؤتمر لبحث لم يتم اعتماده وقبوله رسميا بعد.')
+        messages.error(request, 'لا يمكن اصدار بطاقة دخول المؤتمر لبحث لم يتم قبوله نهائيا بعد.')
         return redirect('track_submission')
     return render(request, 'submissions/acceptance_pass.html', {'submission': submission})
 
@@ -213,9 +247,10 @@ def editor_portal(request):
             Q(department__icontains=search_query)
         )
 
-    pending_count = ConferenceSubmission.objects.filter(status='submitted').count()
+    pending_count = ConferenceSubmission.objects.filter(status__in=['submitted', 'full_paper_submitted']).count()
     under_review_count = ConferenceSubmission.objects.filter(status='under_scientific_review').count()
     evaluated_count = ConferenceSubmission.objects.filter(status='scientific_evaluated').count()
+    abstract_accepted_count = ConferenceSubmission.objects.filter(status='abstract_accepted').count()
     accepted_count = ConferenceSubmission.objects.filter(status='accepted').count()
 
     context = {
@@ -223,6 +258,7 @@ def editor_portal(request):
         'pending_count': pending_count,
         'under_review_count': under_review_count,
         'evaluated_count': evaluated_count,
+        'abstract_accepted_count': abstract_accepted_count,
         'accepted_count': accepted_count,
         'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
@@ -271,9 +307,12 @@ def editor_final_decision(request, pk):
         submission.final_decision_at = timezone.now()
         submission.final_decision_by = request.user
 
-        if final_decision == 'accept':
+        if final_decision == 'abstract_accept':
+            submission.status = 'abstract_accepted'
+            messages.success(request, f'تم اعتماد قبول ملخص البحث ({submission.tracking_code}) مبدئيا واصدار اشعار قبول الملخص للباحث.')
+        elif final_decision == 'final_accept':
             submission.status = 'accepted'
-            messages.success(request, f'تم اعتماد قبول البحث ({submission.tracking_code}) نهائيا واصدار اشعار القبول.')
+            messages.success(request, f'تم اعتماد قبول البحث ({submission.tracking_code}) نهائيا واصدار بطاقة دخول المؤتمر.')
         elif final_decision == 'revise':
             submission.status = 'revision_required'
             messages.warning(request, f'تم اصدار طلب التعديلات الاكاديمية للباحث للورقة ({submission.tracking_code}).')
@@ -296,7 +335,6 @@ def scientific_portal(request):
     university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
-    # حجب الاوراق غير المفحوصة تماما
     submissions = ConferenceSubmission.objects.exclude(status__in=['submitted', 'defective_file'])
 
     if domain_filter:
@@ -315,15 +353,15 @@ def scientific_portal(request):
 
     under_review_count = ConferenceSubmission.objects.filter(status='under_scientific_review').count()
     evaluated_count = ConferenceSubmission.objects.filter(status='scientific_evaluated').count()
+    abstract_accepted_count = ConferenceSubmission.objects.filter(status='abstract_accepted').count()
     accepted_count = ConferenceSubmission.objects.filter(status='accepted').count()
-    revision_count = ConferenceSubmission.objects.filter(status='revision_required').count()
 
     context = {
         'submissions': submissions,
         'under_review_count': under_review_count,
         'evaluated_count': evaluated_count,
+        'abstract_accepted_count': abstract_accepted_count,
         'accepted_count': accepted_count,
-        'revision_count': revision_count,
         'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'submission_statuses': ConferenceSubmission.SUBMISSION_STATUS,
