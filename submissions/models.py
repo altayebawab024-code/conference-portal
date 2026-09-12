@@ -25,8 +25,8 @@ class ConferenceSubmission(models.Model):
         ('imam_mahdi', 'جامعة الامام المهدي'),
         ('bakht_ruda', 'جامعة بخت الرضا'),
         ('sennar', 'جامعة سنار'),
-        ('other', 'جامعة النيل الأبيض'),
-    
+        ('other', 'جامعة النيل الابيض'),
+    ]
 
     ACADEMIC_DOMAINS = [
         ('track_1', 'المحور الاول: البحث العلمي ودوره في التنمية المستدامة واعادة الاعمار بعد الحرب'),
@@ -46,7 +46,6 @@ class ConferenceSubmission(models.Model):
         ('undergrad', 'طالب جامعي / مشروع متميز (Undergraduate)'),
     ]
 
-    # الملخص اولا وافتراضيا حسب مرحلة المؤتمر الحالية
     PARTICIPATION_TYPES = [
         ('abstract', 'ملخص بحثي (Abstract)'),
         ('full_paper', 'ورقة علمية / بحث كامل (Full Research Paper)'),
@@ -55,7 +54,6 @@ class ConferenceSubmission(models.Model):
         ('workshop', 'مقترح ورشة عمل تفاعلية (Workshop Proposal)'),
     ]
 
-    # حالات الطلب التي تعكس المرحلتين بدقة
     SUBMISSION_STATUS = [
         ('submitted', 'تم الاستلام (قيد الفحص الاداري)'),
         ('defective_file', 'تنبيه: الملف غير صالح (مطلوب اعادة الرفع)'),
@@ -89,7 +87,7 @@ class ConferenceSubmission(models.Model):
     participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='abstract', verbose_name="نوع المشاركة")
     title = models.CharField(max_length=300, verbose_name="عنوان البحث")
 
-    # 3. ملفات المشاركة (ملف الملخص المبدئي + ملف الورقة الكاملة للمرحلة الثانية)
+    # 3. ملفات المشاركة
     file = models.FileField(
         upload_to='submissions_files/',
         verbose_name="ملف الملخص / البحث المرفوع (Word او PDF)",
