@@ -1,7 +1,7 @@
 {% extends 'submissions/base.html' %}
 {% load static %}
 
-{% block title %}استمارة تقديم ورقة / مشاركة علمية{% endblock %}
+{% block title %}استمارة تقديم ورقة / ملخص بحثي{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5" style="max-width: 900px;">
@@ -11,7 +11,7 @@
         <div class="text-center mb-4 pb-3 border-bottom">
             <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الاول لجامعة البطانة</span>
-            <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / مشاركة علمية</h3>
+            <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / ملخص بحثي</h3>
             <p class="text-muted small">عمادة البحث العلمي والنشر والترجمة - ملتقى جامعات قطاع الوسط</p>
         </div>
 
@@ -81,8 +81,8 @@
                     </div>
 
                     <div class="col-md-12">
-                        <label class="form-label small fw-bold">نوع المشاركة *</label>
-                        <select name="participation_type" class="form-select" required>
+                        <label class="form-label small fw-bold text-primary">نوع المشاركة *</label>
+                        <select name="participation_type" class="form-select border-primary fw-semibold" required>
                             {% for code, label in participation_types %}
                                 <option value="{{ code }}">{{ label }}</option>
                             {% endfor %}
@@ -90,15 +90,15 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label small fw-bold">عنوان البحث او المشروع العلمي كاملا *</label>
-                        <input type="text" name="title" class="form-control" required placeholder="ادخل العنوان الاكاديمي الدقيق للورقة العلمية">
+                        <label class="form-label small fw-bold">عنوان البحث او الملخص العلمي كاملا *</label>
+                        <input type="text" name="title" class="form-control" required placeholder="ادخل العنوان الاكاديمي الدقيق">
                     </div>
                 </div>
             </div>
 
             <div class="p-4 bg-white rounded-3 border border-2 border-primary mb-4 text-center">
                 <i class="bi bi-cloud-arrow-up-fill text-primary fs-1 mb-2 d-block"></i>
-                <h5 class="fw-bold text-dark mb-1">ارفاق ملف البحث الاصلي *</h5>
+                <h5 class="fw-bold text-dark mb-1">ارفاق ملف الملخص / البحث *</h5>
                 <p class="text-muted small mb-3">الصيغ المقبولة: <strong>PDF او Word (.docx, .doc)</strong> بحد اقصى 15 ميجابايت</p>
                 
                 <div class="col-md-8 mx-auto">
