@@ -25,7 +25,7 @@ class ConferenceSubmission(models.Model):
         ('imam_mahdi', 'جامعة الامام المهدي'),
         ('bakht_ruda', 'جامعة بخت الرضا'),
         ('sennar', 'جامعة سنار'),
-        ('other', 'جامعة النيل الابيض'),
+        ('other', 'جامعة النيل الأبيض'),
     ]
 
     ACADEMIC_DOMAINS = [
@@ -87,7 +87,7 @@ class ConferenceSubmission(models.Model):
     participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='abstract', verbose_name="نوع المشاركة")
     title = models.CharField(max_length=300, verbose_name="عنوان البحث")
 
-    # 3. ملفات المشاركة
+    # 3. ملفات المشاركة (ملف الملخص المبدئي + ملف الورقة الكاملة)
     file = models.FileField(
         upload_to='submissions_files/',
         verbose_name="ملف الملخص / البحث المرفوع (Word او PDF)",
@@ -110,7 +110,7 @@ class ConferenceSubmission(models.Model):
     # 4. مسار المتابعة
     status = models.CharField(max_length=35, choices=SUBMISSION_STATUS, default='submitted', verbose_name="حالة الطلب")
 
-    # 5. اجراءات هيئة التحرير (الفحص الاولي)
+    # 5. اجراءات هيئة التحرير
     editor_notes = models.TextField(null=True, blank=True, verbose_name="ملاحظات هيئة التحرير")
     editor_checked_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ الفحص الاداري")
     editor_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='editor_managed_submissions', verbose_name="تم الفحص بواسطة رئيس التحرير")
