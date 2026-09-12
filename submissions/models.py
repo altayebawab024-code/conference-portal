@@ -17,7 +17,6 @@ def validate_file_size(file):
 class ConferenceSubmission(models.Model):
     """جدول مشاركات المؤتمر العلمي الاول لجامعة البطانة"""
 
-    # جامعات قطاع الوسط المعتمدة
     UNIVERSITIES = [
         ('butana', 'جامعة البطانة'),
         ('gezira', 'جامعة الجزيرة'),
@@ -26,10 +25,9 @@ class ConferenceSubmission(models.Model):
         ('imam_mahdi', 'جامعة الامام المهدي'),
         ('bakht_ruda', 'جامعة بخت الرضا'),
         ('sennar', 'جامعة سنار'),
-        ('other', 'جامعة النيل الأبيض  '),
+        ('other', 'جامعة / مؤسسة اكاديمية اخرى'),
     ]
 
-    # المحاور العلمية الخمسة الرسمية للمؤتمر نصا من البوستر الرسمي
     ACADEMIC_DOMAINS = [
         ('track_1', 'المحور الاول: البحث العلمي ودوره في التنمية المستدامة واعادة الاعمار بعد الحرب'),
         ('track_2', 'المحور الثاني: التكنولوجيا والابتكار والتحول الرقمي ودورها في التنمية المستدامة واعادة الاعمار'),
@@ -48,22 +46,26 @@ class ConferenceSubmission(models.Model):
         ('undergrad', 'طالب جامعي / مشروع متميز (Undergraduate)'),
     ]
 
+    # الملخص اولا وافتراضيا حسب مرحلة المؤتمر الحالية
     PARTICIPATION_TYPES = [
+        ('abstract', 'ملخص بحثي (Abstract)'),
         ('full_paper', 'ورقة علمية / بحث كامل (Full Research Paper)'),
-        ('abstract', 'ملخص بحثي موسع (Extended Abstract)'),
         ('poster', 'بوستر / ملصق علمي (Scientific Poster)'),
         ('innovative_project', 'مشروع ابتكاري / براءة اختراع (Innovative Project)'),
         ('workshop', 'مقترح ورشة عمل تفاعلية (Workshop Proposal)'),
     ]
 
+    # حالات الطلب التي تعكس المرحلتين بدقة
     SUBMISSION_STATUS = [
         ('submitted', 'تم الاستلام (قيد الفحص الاداري)'),
         ('defective_file', 'تنبيه: الملف غير صالح (مطلوب اعادة الرفع)'),
         ('under_scientific_review', 'محال للجنة العلمية (قيد التحكيم)'),
         ('scientific_evaluated', 'تم انتهاء التحكيم (بانتظار اعتماد هيئة التحرير)'),
+        ('abstract_accepted', 'تم قبول الملخص مبدئيا (مطلوب تسليم الورقة الكاملة قبل 10 نوفمبر)'),
+        ('full_paper_submitted', 'تم استلام الورقة الكاملة (قيد المراجعة النهائية)'),
         ('revision_required', 'مطلوب اجراء تعديلات اكاديمية'),
-        ('accepted', 'تم قبول البحث للمشاركة في المؤتمر'),
-        ('rejected', 'اعتذار عن عدم قبول البحث في الدورة الحالية'),
+        ('accepted', 'تم قبول البحث نهائيا (جاهز لطباعة بطاقة دخول المؤتمر)'),
+        ('rejected', 'اعتذار عن عدم قبول المشاركة'),
     ]
 
     tracking_code = models.CharField(max_length=50, unique=True, blank=True, verbose_name="كود تتبع الطلب")
@@ -84,13 +86,23 @@ class ConferenceSubmission(models.Model):
         verbose_name="اسم المؤتمر"
     )
     academic_domain = models.CharField(max_length=30, choices=ACADEMIC_DOMAINS, default='track_1', verbose_name="المحور العلمي")
-    participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='full_paper', verbose_name="نوع المشاركة")
+    participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='abstract', verbose_name="نوع المشاركة")
     title = models.CharField(max_length=300, verbose_name="عنوان البحث")
 
-    # 3. ملف المشاركة
+    # 3. ملفات المشاركة (ملف الملخص المبدئي + ملف الورقة الكاملة للمرحلة الثانية)
     file = models.FileField(
         upload_to='submissions_files/',
-        verbose_name="ملف البحث (Word او PDF)",
+        verbose_name="ملف الملخص / البحث المرفوع (Word او PDF)",
+        validators=[
+            FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx']),
+            validate_file_size,
+        ]
+    )
+    full_paper_file = models.FileField(
+        upload_to='full_papers/',
+        null=True,
+        blank=True,
+        verbose_name="ملف الورقة العلمية الكاملة (المرحلة الثانية)",
         validators=[
             FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx']),
             validate_file_size,
