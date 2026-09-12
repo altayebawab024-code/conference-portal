@@ -54,11 +54,27 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(184, 134, 11, 0.3);
         }
+        .ribbon-bar {
+            background-color: #0b2545;
+            color: #d4af37;
+            font-size: 0.8rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
 
+    <!-- شريط ملتقى جامعات قطاع الوسط الرسمي -->
+    <div class="ribbon-bar text-center">
+        <div class="container">
+            <span class="fw-bold">ملتقى جامعات قطاع الوسط:</span> 
+            جامعة البطانة | جامعة الجزيرة | جامعة القران الكريم وتاصيل العلوم | جامعة المناقل | جامعة الامام المهدي | جامعة بخت الرضا | جامعة سنار
+        </div>
+    </div>
+
+    <!-- شريط الملاحة الرسمي -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-main py-2">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-3" href="{% url 'home' %}">
@@ -142,4 +158,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
-                    </html>
+</html>
