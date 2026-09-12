@@ -40,7 +40,7 @@
 
         <div class="text-end mb-3 no-print">
             <button onclick="window.print()" class="btn btn-dark fw-bold px-4">
-                <i class="bi bi-printer-fill me-1"></i> طباعة الوثيقة الرسمية
+                <i class="bi bi-printer-fill me-1"></i> طباعة بطاقة دخول المؤتمر
             </button>
             <a href="{% url 'home' %}" class="btn btn-outline-secondary px-3">الرئيسية</a>
         </div>
@@ -65,9 +65,9 @@
             </div>
 
             <div class="text-center mb-4">
-                <span class="badge bg-success text-white px-4 py-2 fs-6 mb-2">اشعار قبول رسمي وتصريح مشاركة في المؤتمر</span>
+                <span class="badge bg-success text-white px-4 py-2 fs-6 mb-2">المرحلة النهائية: اشعار قبول رسمي وتصريح مشاركة</span>
                 <h4 class="fw-bold text-dark mb-0">بطاقة دخول المؤتمر وجلسات تقديم الابحاث</h4>
-                <small class="text-muted">تاريخ انعقاد المؤتمر: 26 و 27 ديسمبر 2026م</small>
+                <small class="text-muted fw-bold">تاريخ انعقاد المؤتمر: 26 و 27 ديسمبر 2026م</small>
             </div>
 
             <div class="alert alert-light border border-2 border-success text-center py-2 mb-4">
@@ -97,18 +97,14 @@
                     <td>{{ submission.get_academic_domain_display }}</td>
                 </tr>
                 <tr>
-                    <th class="table-light">نوع المشاركة</th>
-                    <td>{{ submission.get_participation_type_display }}</td>
-                </tr>
-                <tr>
                     <th class="table-light">تاريخ اعتماد القرار</th>
                     <td>{{ submission.final_decision_at|date:"Y-m-d"|default:submission.updated_at|date:"Y-m-d" }}</td>
                 </tr>
             </table>
 
             <div class="p-3 bg-light rounded-3 border mb-4 text-center small">
-                <strong>افادة القبول والاعتماد:</strong><br>
-                تشهد عمادة البحث العلمي والنشر والترجمة واللجنة العلمية لمؤتمر جامعة البطانة بقبول الورقة البحثية الموضحة بياناتها اعلاه بعد اجتيازها مرحلة التحكيم العلمي المعتمد، ويعتبر هذا الاشعار تصريحا رسميا للباحث لحضور وتقديم بحثه في الجلسات العلمية للمؤتمر المنعقدة بتاريخ 26 و 27 ديسمبر 2026م.
+                <strong>افادة القبول النهائي والاعتماد:</strong><br>
+                تشهد عمادة البحث العلمي والنشر والترجمة واللجنة العلمية لمؤتمر جامعة البطانة بقبول الورقة البحثية الكاملة الموضحة بياناتها اعلاه بعد اجتيازها مرحلة التحكيم العلمي المعتمد، ويعتبر هذا الاشعار تصريحا رسميا للباحث لحضور وتقديم بحثه في الجلسات العلمية للمؤتمر المنعقدة بتاريخ 26 و 27 ديسمبر 2026م.
             </div>
 
             <div class="d-flex justify-content-between align-items-end pt-3 border-top">
