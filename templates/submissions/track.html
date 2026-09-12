@@ -39,50 +39,70 @@
                 </div>
             </div>
 
-            <!-- شريط التقدم المرئي المنضبط: رمادي للمراحل القادمة وأخضر للمكتملة فقط -->
+            <!-- شريط التقدم المرئي الدقيق 100% -->
             <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-bezier2"></i> مسار تقييم وتحكيم البحث:</h6>
             <div class="d-flex flex-wrap justify-content-between align-items-center text-center gap-2 p-3 bg-light rounded-3 mb-4">
                 
-                <!-- المرحلة 1: استلام الملخص (مكتملة دائما) -->
+                <!-- 1. استلام الملخص (أخضر دائماً) -->
                 <span class="badge bg-success p-2 small">
                     1. استلام الملخص <i class="bi bi-check-circle-fill"></i>
                 </span>
                 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- المرحلة 2: الفحص الاداري -->
-                <span class="badge {% if submission.status != 'submitted' and submission.status != 'defective_file' %}bg-success text-white{% else %}bg-secondary text-white-50{% endif %} p-2 small">
-                    2. الفحص الاداري
-                    {% if submission.status != 'submitted' and submission.status != 'defective_file' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
-                </span>
+                <!-- 2. الفحص الإداري (أخضر فقط بعد اجتياز الفحص) -->
+                {% if submission.status == 'under_scientific_review' or submission.status == 'scientific_evaluated' or submission.status == 'abstract_accepted' or submission.status == 'full_paper_submitted' or submission.status == 'accepted' or submission.status == 'revision_required' or submission.status == 'rejected' %}
+                    <span class="badge bg-success text-white p-2 small">
+                        2. الفحص الاداري <i class="bi bi-check-circle-fill"></i>
+                    </span>
+                {% else %}
+                    <span class="badge bg-secondary text-white-50 p-2 small">
+                        2. الفحص الاداري
+                    </span>
+                {% endif %}
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- المرحلة 3: قبول الملخص -->
-                <span class="badge {% if submission.status in 'abstract_accepted,full_paper_submitted,accepted' %}bg-success text-white{% else %}bg-secondary text-white-50{% endif %} p-2 small">
-                    3. قبول الملخص
-                    {% if submission.status in 'abstract_accepted,full_paper_submitted,accepted' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
-                </span>
+                <!-- 3. قبول الملخص (أخضر فقط بعد قبول الملخص أو الورقة الكاملة) -->
+                {% if submission.status == 'abstract_accepted' or submission.status == 'full_paper_submitted' or submission.status == 'accepted' %}
+                    <span class="badge bg-success text-white p-2 small">
+                        3. قبول الملخص <i class="bi bi-check-circle-fill"></i>
+                    </span>
+                {% else %}
+                    <span class="badge bg-secondary text-white-50 p-2 small">
+                        3. قبول الملخص
+                    </span>
+                {% endif %}
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- المرحلة 4: تسليم الورقة الكاملة -->
-                <span class="badge {% if submission.status in 'full_paper_submitted,accepted' %}bg-success text-white{% else %}bg-secondary text-white-50{% endif %} p-2 small">
-                    4. تسليم الورقة الكاملة
-                    {% if submission.status in 'full_paper_submitted,accepted' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
-                </span>
+                <!-- 4. تسليم الورقة الكاملة (أخضر فقط بعد رفع الورقة الكاملة) -->
+                {% if submission.status == 'full_paper_submitted' or submission.status == 'accepted' %}
+                    <span class="badge bg-success text-white p-2 small">
+                        4. تسليم الورقة الكاملة <i class="bi bi-check-circle-fill"></i>
+                    </span>
+                {% else %}
+                    <span class="badge bg-secondary text-white-50 p-2 small">
+                        4. تسليم الورقة الكاملة
+                    </span>
+                {% endif %}
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- المرحلة 5: بطاقة دخول المؤتمر -->
-                <span class="badge {% if submission.status == 'accepted' %}bg-success text-white{% else %}bg-secondary text-white-50{% endif %} p-2 small">
-                    5. بطاقة دخول المؤتمر
-                    {% if submission.status == 'accepted' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
-                </span>
+                <!-- 5. بطاقة دخول المؤتمر (أخضر فقط عند القبول النهائي) -->
+                {% if submission.status == 'accepted' %}
+                    <span class="badge bg-success text-white p-2 small">
+                        5. بطاقة دخول المؤتمر <i class="bi bi-check-circle-fill"></i>
+                    </span>
+                {% else %}
+                    <span class="badge bg-secondary text-white-50 p-2 small">
+                        5. بطاقة دخول المؤتمر
+                    </span>
+                {% endif %}
 
             </div>
 
-            <!-- تفاصيل وملاحظات كل مرحلة -->
+            <!-- تفاصيل كل مرحلة -->
             {% if submission.status == 'abstract_accepted' %}
                 <div class="alert alert-success p-4 mb-4">
                     <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> مبارك! تم قبول ملخصكم البحثي مبدئيا</h5>
