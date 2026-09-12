@@ -30,9 +30,8 @@
                 </div>
                 <div>
                     <span class="badge 
-                        {% if submission.status == 'accepted' %}bg-success
-                        {% elif submission.status == 'rejected' %}bg-danger
-                        {% elif submission.status == 'defective_file' %}bg-danger
+                        {% if submission.status == 'accepted' or submission.status == 'abstract_accepted' %}bg-success
+                        {% elif submission.status == 'rejected' or submission.status == 'defective_file' %}bg-danger
                         {% elif submission.status == 'revision_required' %}bg-warning text-dark
                         {% else %}bg-primary{% endif %} fs-6 px-3 py-2">
                         {{ submission.get_status_display }}
@@ -42,42 +41,62 @@
 
             <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-bezier2"></i> مسار تقييم وتحكيم البحث:</h6>
             <div class="d-flex flex-wrap justify-content-between align-items-center text-center gap-2 p-3 bg-light rounded-3 mb-4">
-                
-                <span class="badge bg-success p-2 small">
-                    1. استلام البحث <i class="bi bi-check-circle-fill"></i>
-                </span>
-                
+                <span class="badge bg-success p-2 small">1. استلام الملخص</span>
                 <i class="bi bi-arrow-left text-muted"></i>
-
-                <span class="badge {% if submission.status != 'submitted' and submission.status != 'defective_file' %}bg-success{% elif submission.status == 'defective_file' %}bg-danger{% else %}bg-warning text-dark{% endif %} p-2 small">
-                    2. الفحص الاداري (هيئة التحرير)
-                    {% if submission.status != 'submitted' and submission.status != 'defective_file' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
-                </span>
-
+                <span class="badge {% if submission.status != 'submitted' and submission.status != 'defective_file' %}bg-success{% elif submission.status == 'defective_file' %}bg-danger{% else %}bg-warning text-dark{% endif %} p-2 small">2. الفحص الاداري</span>
                 <i class="bi bi-arrow-left text-muted"></i>
-
-                <span class="badge {% if submission.status in 'accepted,rejected,revision_required' %}bg-success{% elif submission.status in 'under_scientific_review,scientific_evaluated' %}bg-warning text-dark{% else %}bg-secondary{% endif %} p-2 small">
-                    3. تحكيم اللجنة العلمية
-                    {% if submission.status in 'accepted,rejected,revision_required' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
-                </span>
-
+                <span class="badge {% if submission.status in 'abstract_accepted,full_paper_submitted,accepted' %}bg-success{% elif submission.status == 'under_scientific_review' %}bg-warning text-dark{% else %}bg-secondary{% endif %} p-2 small">3. قبول الملخص</span>
                 <i class="bi bi-arrow-left text-muted"></i>
-
-                <span class="badge {% if submission.status == 'accepted' %}bg-success{% elif submission.status == 'rejected' %}bg-danger{% else %}bg-secondary{% endif %} p-2 small">
-                    4. النتيجة والاعتماد
-                </span>
-
+                <span class="badge {% if submission.status in 'full_paper_submitted,accepted' %}bg-success{% else %}bg-secondary{% endif %} p-2 small">4. تسليم الورقة الكاملة</span>
+                <i class="bi bi-arrow-left text-muted"></i>
+                <span class="badge {% if submission.status == 'accepted' %}bg-success{% else %}bg-secondary{% endif %} p-2 small">5. بطاقة دخول المؤتمر</span>
             </div>
 
-            <!-- قرار القبول النهائي وبطاقة الدخول -->
+            {% if submission.status == 'abstract_accepted' %}
+                <div class="alert alert-success p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> مبارك! تم قبول ملخصكم البحثي مبدئيا</h5>
+                    <p class="mb-3 text-dark">
+                        {{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة واللجنة العلمية افادتكم بقبول ملخصكم البحثي، يرجى تسليم النسخة الكاملة من البحث في موعد اقصاه 10 نوفمبر 2026م." }}
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <a href="{% url 'abstract_acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-outline-success fw-bold">
+                            <i class="bi bi-printer-fill me-1"></i> طباعة اشعار قبول الملخص المبدئي
+                        </a>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-3 border border-2 border-primary">
+                        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-cloud-arrow-up-fill"></i> رفع وتسليم الورقة العلمية الكاملة (المرحلة الثانية):</h6>
+                        <p class="small text-muted mb-3">يرجى رفع ملف البحث الكامل (Word او PDF) بحجم لا يتجاوز 15 ميجابايت قبل 10 نوفمبر 2026م.</p>
+                        
+                        <form method="post" action="{% url 'upload_full_paper' submission.tracking_code %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="file" name="full_paper_file" class="form-control" accept=".pdf,.doc,.docx" required>
+                                <button type="submit" class="btn btn-primary fw-bold px-4">تسليم الورقة الكاملة الان</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if submission.status == 'full_paper_submitted' %}
+                <div class="alert alert-info p-4 mb-4">
+                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-clock-history"></i> تم استلام ورقتكم العلمية الكاملة بنجاح</h5>
+                    <p class="mb-0 text-dark">
+                        الورقة قيد المراجعة والتحكيم النهائي من اللجنة العلمية، وسيتم اصدار بطاقة دخول المؤتمر فور انتهاء الاعتماد.
+                    </p>
+                </div>
+            {% endif %}
+
             {% if submission.status == 'accepted' %}
                 <div class="alert alert-success p-4 mb-4">
-                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> افادة رسمية: تم قبول البحث للمشاركة في المؤتمر</h5>
-                    <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة واللجنة العلمية لمؤتمر جامعة البطانة افادتكم بقبول ورقتكم العلمية للمشاركة في فعاليات المؤتمر." }}</p>
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> تهانينا! تم قبول البحث كاملا للمشاركة في المؤتمر</h5>
+                    <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة افادتكم باعتماد قبول ورقتكم العلمية للمشاركة في جلسات المؤتمر المنعقدة بتاريخ 26 و 27 ديسمبر 2026م." }}</p>
                     
                     <div class="text-center pt-3 border-top border-success">
                         <a href="{% url 'acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-success btn-lg px-4 fw-bold shadow">
-                            <i class="bi bi-printer-fill me-2"></i> طباعة اشعار القبول وبطاقة دخول المؤتمر
+                            <i class="bi bi-printer-fill me-2"></i> طباعة اشعار القبول النهائي وبطاقة دخول المؤتمر
                         </a>
                     </div>
                 </div>
@@ -90,7 +109,7 @@
                     
                     <form method="post" action="{% url 'reupload_file' submission.tracking_code %}" enctype="multipart/form-data" class="bg-white p-3 rounded border">
                         {% csrf_token %}
-                        <label class="form-label small fw-bold text-dark">رفع النسخة المعدلة من البحث (Word او PDF):</label>
+                        <label class="form-label small fw-bold text-dark">رفع النسخة المعدلة (Word او PDF):</label>
                         <div class="input-group">
                             <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx" required>
                             <button type="submit" class="btn btn-warning fw-bold">تسليم النسخة المعدلة</button>
