@@ -1,45 +1,75 @@
 {% extends 'submissions/base.html' %}
 
-{% block title %}لوحة اللجنة العلمية - تحكيم الاوراق البحثية{% endblock %}
+{% block title %}لوحة رئيس التحرير - فحص واعتماد المشاركات{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 mt-4 mb-5">
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
         <div>
-            <h4 class="fw-bold text-dark mb-1"><i class="bi bi-award-fill text-warning"></i> لوحة تحكيم وقرارات اللجنة العلمية للمؤتمر</h4>
-            <p class="text-muted small mb-0">تقييم الملخصات والاوراق المحالة، وضع درجات التحكيم السرية، ورفع التوصيات الى هيئة التحرير</p>
+            <h4 class="fw-bold text-primary mb-1"><i class="bi bi-kanban-fill"></i> لوحة تحكم رئيس التحرير (الفحص الاداري والاعتماد النهائي)</h4>
+            <p class="text-muted small mb-0">مراجعة ملفات الملخصات والابحاث، احالتها للجنة العلمية، واعتماد اشعارات القبول بالمرحلتين</p>
         </div>
         <div>
-            <span class="badge bg-warning text-dark fs-6">صلاحية: عضو اللجنة العلمية</span>
+            <span class="badge bg-dark fs-6">صلاحية: رئيس التحرير</span>
         </div>
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-warning border-4">
-                <span class="text-muted small fw-bold">اوراق/ملخصات قيد تحكيم اللجنة</span>
-                <h3 class="fw-bold text-warning mt-1">{{ under_review_count }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-custom p-3 border-start border-primary border-4">
-                <span class="text-muted small fw-bold">اوراق تم تقييمها ورفعها لرئيس التحرير</span>
-                <h3 class="fw-bold text-primary mt-1">{{ evaluated_count }}</h3>
+                <span class="text-muted small fw-bold">ملخصات/اوراق جديدة بانتظار الفحص</span>
+                <h3 class="fw-bold text-warning mt-1">{{ pending_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-info border-4">
-                <span class="text-muted small fw-bold">ملخصات تم قبولها مبدئيا</span>
-                <h3 class="fw-bold text-info mt-1">{{ abstract_accepted_count }}</h3>
+                <span class="text-muted small fw-bold">قيد تحكيم اللجنة العلمية</span>
+                <h3 class="fw-bold text-info mt-1">{{ under_review_count }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom p-3 border-start border-primary border-4">
+                <span class="text-muted small fw-bold">تم قبول الملخص (بانتظار الورقة الكاملة)</span>
+                <h3 class="fw-bold text-primary mt-1">{{ abstract_accepted_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card card-custom p-3 border-start border-success border-4">
-                <span class="text-muted small fw-bold">ابحاث مقبولة نهائيا للمؤتمر</span>
+                <span class="text-muted small fw-bold">ابحاث مقبولة نهائيا (بطاقة الدخول)</span>
                 <h3 class="fw-bold text-success mt-1">{{ accepted_count }}</h3>
             </div>
         </div>
+    </div>
+
+    <div class="card card-custom p-3 mb-4">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">بحث</label>
+                <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-sm" placeholder="ابحث بالكود، اسم الباحث، الكلية، القسم...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">المحور العلمي</label>
+                <select name="domain" class="form-select form-select-sm">
+                    <option value="">جميع المحاور</option>
+                    {% for code, label in academic_domains %}
+                        <option value="{{ code }}" {% if domain_filter == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">الحالة</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">جميع الحالات</option>
+                    {% for code, label in submission_statuses %}
+                        <option value="{{ code }}" {% if status_filter == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">تطبيق الفلترة</button>
+            </div>
+        </form>
     </div>
 
     <div class="card card-custom p-4">
@@ -47,14 +77,14 @@
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>كود البحث</th>
+                        <th>كود التتبع</th>
                         <th>الباحث والمؤسسة</th>
                         <th>الكلية والقسم الاكاديمي</th>
-                        <th>عنوان المشاركة والمحور</th>
+                        <th>عنوان المشاركة ونوعها</th>
                         <th>الملف</th>
-                        <th>الدرجة السرية</th>
                         <th>الحالة</th>
-                        <th>بطاقة تحكيم اللجنة</th>
+                        <th>تقرير اللجنة العلمية</th>
+                        <th>الاجراء الاداري</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,7 +92,7 @@
                         <tr>
                             <td class="fw-bold text-primary">{{ sub.tracking_code }}</td>
                             <td>
-                                <strong>{{ sub.author_name }}</strong> ({{ sub.get_academic_degree_display }})<br>
+                                <strong>{{ sub.author_name }}</strong><br>
                                 <span class="text-muted small">{{ sub.get_university_display }}</span>
                             </td>
                             <td>
@@ -70,84 +100,124 @@
                                 <span class="badge bg-light text-dark border small">{{ sub.department }}</span>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark">{{ sub.title }}</div>
-                                <span class="badge bg-light text-dark border small">{{ sub.get_academic_domain_display|truncatechars:35 }}</span>
+                                <div class="fw-bold text-dark">{{ sub.title|truncatechars:40 }}</div>
+                                <span class="badge bg-secondary small">{{ sub.get_participation_type_display }}</span>
                             </td>
                             <td>
                                 {% if sub.is_pdf %}
-                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger">فتح PDF</a>
+                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger">PDF</a>
                                 {% else %}
-                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">فتح Word</a>
+                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">Word</a>
                                 {% endif %}
                                 {% if sub.full_paper_file %}
-                                    <br><a href="{{ sub.full_paper_file.url }}" target="_blank" class="btn btn-sm btn-success mt-1">الورقة الكاملة</a>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if sub.scientific_score %}
-                                    <span class="badge bg-dark fs-6">{{ sub.scientific_score }}/100</span>
-                                {% else %}
-                                    <span class="text-muted small">لم تقيم</span>
+                                    <br><span class="badge bg-success mt-1">الورقة الكاملة</span>
                                 {% endif %}
                             </td>
                             <td>
                                 <span class="badge 
-                                    {% if sub.status == 'accepted' %}bg-success
-                                    {% elif sub.status == 'rejected' %}bg-danger
-                                    {% elif sub.status == 'abstract_accepted' %}bg-info text-dark
+                                    {% if sub.status == 'submitted' %}bg-warning text-dark
+                                    {% elif sub.status == 'defective_file' %}bg-danger
                                     {% elif sub.status == 'scientific_evaluated' %}bg-primary
+                                    {% elif sub.status == 'abstract_accepted' %}bg-info text-dark
+                                    {% elif sub.status == 'full_paper_submitted' %}bg-warning text-dark
+                                    {% elif sub.status == 'accepted' %}bg-success
+                                    {% elif sub.status == 'rejected' %}bg-danger
                                     {% elif sub.status == 'revision_required' %}bg-warning text-dark
                                     {% else %}bg-secondary{% endif %}">
                                     {{ sub.get_status_display }}
                                 </span>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-gold px-3" data-bs-toggle="modal" data-bs-target="#reviewModal{{ sub.id }}">
-                                    <i class="bi bi-pencil-square"></i> تحكيم المشاركة
-                                </button>
+                                {% if sub.scientific_decision_notes %}
+                                    <small class="d-block text-dark fw-semibold">{{ sub.scientific_decision_notes|truncatechars:45 }}</small>
+                                    {% if sub.scientific_score %}
+                                        <span class="badge bg-dark small">الدرجة السرية: {{ sub.scientific_score }}/100</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted small">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.status == 'submitted' or sub.status == 'defective_file' or sub.status == 'full_paper_submitted' %}
+                                    <button type="button" class="btn btn-sm btn-warning fw-bold" data-bs-toggle="modal" data-bs-target="#initialModal{{ sub.id }}">
+                                        فحص واحالة
+                                    </button>
+                                {% elif sub.status == 'scientific_evaluated' or sub.status == 'abstract_accepted' or sub.status == 'accepted' or sub.status == 'revision_required' or sub.status == 'rejected' %}
+                                    <button type="button" class="btn btn-sm btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#finalModal{{ sub.id }}">
+                                        اعتماد القرار
+                                    </button>
+                                {% else %}
+                                    <span class="text-muted small">قيد التحكيم</span>
+                                {% endif %}
                             </td>
                         </tr>
 
-                        <div class="modal fade" id="reviewModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
+                        <div class="modal fade" id="initialModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form method="post" action="{% url 'scientific_action' sub.id %}">
+                                    <form method="post" action="{% url 'editor_action' sub.id %}">
                                         {% csrf_token %}
                                         <div class="modal-header bg-dark text-white">
-                                            <h6 class="modal-title fw-bold">بطاقة تحكيم وتقرير اللجنة العلمية: {{ sub.tracking_code }}</h6>
+                                            <h6 class="modal-title fw-bold">الفحص الاداري الاولي: {{ sub.tracking_code }}</h6>
                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <div class="alert alert-light border small mb-3">
-                                                <strong>الباحث:</strong> {{ sub.author_name }} | <strong>الجامعة:</strong> {{ sub.get_university_display }}<br>
-                                                <strong>الكلية والقسم:</strong> {{ sub.faculty }} - {{ sub.department }}<br>
-                                                <strong>عنوان المشاركة:</strong> {{ sub.title }} ({{ sub.get_participation_type_display }})
+                                            <p class="small text-muted mb-2">عنوان البحث: <strong>{{ sub.title }}</strong></p>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold">القرار الاداري:</label>
+                                                <select name="action" class="form-select" required>
+                                                    <option value="forward">الملف سليم ومقروء (احالة الى اللجنة العلمية)</option>
+                                                    <option value="defective">الملف تالف او فارغ (طلب اعادة الرفع من الباحث)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold">ملاحظات ادارية:</label>
+                                                <textarea name="editor_notes" class="form-control" rows="3" placeholder="اكتب اي توجيه للباحث او اللجنة العلمية...">{{ sub.editor_notes|default:"" }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">الغاء</button>
+                                            <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">حفظ واحالة</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="finalModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'editor_final_decision' sub.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header bg-dark text-white">
+                                            <h6 class="modal-title fw-bold">اعتماد واصدار القرار الرسمي للباحث: {{ sub.tracking_code }}</h6>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-info small mb-3">
+                                                <strong>تقرير وتوصية اللجنة العلمية:</strong> {{ sub.scientific_decision_notes|default:"لا توجد ملاحظات" }}<br>
+                                                <strong>درجة التحكيم السرية:</strong> {{ sub.scientific_score|default:"غير محددة" }}/100
                                             </div>
 
                                             <div class="row g-3">
                                                 <div class="col-md-6">
-                                                    <label class="form-label small fw-bold">توصية اللجنة العلمية *</label>
-                                                    <select name="recommendation" id="recSelect{{ sub.id }}" class="form-select" onchange="applyTemplate({{ sub.id }})" required>
-                                                        <option value="accept" {% if sub.scientific_recommendation == 'accept' %}selected{% endif %}>توصية بقبول المشاركة / الملخص</option>
-                                                        <option value="revise" {% if sub.scientific_recommendation == 'revise' %}selected{% endif %}>توصية بقبول مشروط باجراء تعديلات</option>
-                                                        <option value="reject" {% if sub.scientific_recommendation == 'reject' %}selected{% endif %}>توصية بالاعتذار عن عدم قبول المشاركة</option>
+                                                    <label class="form-label small fw-bold">القرار المعتمد للباحث *</label>
+                                                    <select name="final_decision" class="form-select" required>
+                                                        <option value="abstract_accept" {% if sub.status == 'abstract_accepted' %}selected{% endif %}>المرحلة 1: قبول الملخص المبدئي (وطلب تسليم الورقة الكاملة)</option>
+                                                        <option value="final_accept" {% if sub.status == 'accepted' %}selected{% endif %}>المرحلة 2: قبول البحث نهائيا واصدار بطاقة دخول المؤتمر</option>
+                                                        <option value="revise" {% if sub.status == 'revision_required' %}selected{% endif %}>طلب اجراء تعديلات اكاديمية</option>
+                                                        <option value="reject" {% if sub.status == 'rejected' %}selected{% endif %}>اعتذار عن عدم قبول المشاركة</option>
                                                     </select>
                                                 </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label small fw-bold">درجة التحكيم السرية (من 100 - لا تظهر للباحث):</label>
-                                                    <input type="number" name="scientific_score" value="{{ sub.scientific_score|default:'' }}" class="form-control" min="0" max="100" placeholder="مثال: 85">
-                                                </div>
-
                                                 <div class="col-12">
-                                                    <label class="form-label small fw-bold">تقرير وتوصيات اللجنة العلمية (يرفع الى رئيس التحرير):</label>
-                                                    <textarea name="scientific_decision_notes" id="recText{{ sub.id }}" class="form-control" rows="4" placeholder="اكتب تقرير التحكيم او اختر التوصية لتوليد النص تلقائيا...">{{ sub.scientific_decision_notes|default:"" }}</textarea>
+                                                    <label class="form-label small fw-bold">نص الافادة الرسمية الصادرة للباحث في صفحة التتبع:</label>
+                                                    <textarea name="final_decision_notes" class="form-control" rows="4" placeholder="اكتب نص الافادة المعتمدة...">{{ sub.final_decision_notes|default:sub.scientific_decision_notes }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">الغاء</button>
-                                            <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">رفع التقرير لرئيس التحرير</button>
+                                            <button type="submit" class="btn btn-success btn-sm fw-bold px-4">اعتماد واصدار الافادة للباحث</button>
                                         </div>
                                     </form>
                                 </div>
@@ -156,7 +226,7 @@
 
                     {% empty %}
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-5">لا توجد مشاركات محالة للجنة العلمية حاليا.</td>
+                            <td colspan="8" class="text-center text-muted py-5">لا توجد مشاركات مطابقة حاليا.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -165,22 +235,4 @@
     </div>
 
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function applyTemplate(id) {
-    var select = document.getElementById('recSelect' + id);
-    var textarea = document.getElementById('recText' + id);
-    if (!select || !textarea) return;
-
-    if (select.value === 'accept') {
-        textarea.value = 'توصي اللجنة العلمية بقبول الملخص البحثي للمشاركة واستيفائه الشروط الاكاديمية، ونوصي بطلب تسليم النسخة الكاملة من البحث.';
-    } else if (select.value === 'revise') {
-        textarea.value = 'توصي اللجنة العلمية بقبول الورقة شريطة اجراء التعديلات المنهجية والاكاديمية الموضحة واعادة تسليم النسخة المعدلة.';
-    } else if (select.value === 'reject') {
-        textarea.value = 'تعتذر اللجنة العلمية عن قبول المشاركة لعدم مطابقتها لمحاور وشروط المؤتمر العلمي الاول لجامعة البطانة.';
-    }
-}
-</script>
 {% endblock %}
