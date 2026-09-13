@@ -50,8 +50,8 @@
                         <th>كود البحث</th>
                         <th>الباحث والمؤسسة</th>
                         <th>الكلية والقسم الاكاديمي</th>
-                        <th>عنوان المشاركة والمحور</th>
-                        <th>الملف</th>
+                        <th>عنوان المشاركة ونوعها</th>
+                        <th>الملف المرفوع للتحكيم</th>
                         <th>الدرجة السرية</th>
                         <th>الحالة</th>
                         <th>بطاقة تحكيم اللجنة</th>
@@ -71,16 +71,21 @@
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">{{ sub.title }}</div>
-                                <span class="badge bg-light text-dark border small">{{ sub.get_academic_domain_display|truncatechars:35 }}</span>
+                                {% if sub.status == 'full_paper_submitted' or sub.participation_type == 'full_paper' %}
+                                    <span class="badge bg-primary small">ورقة علمية كاملة (المرحلة 2)</span>
+                                {% else %}
+                                    <span class="badge bg-secondary small">ملخص بحثي (المرحلة 1)</span>
+                                {% endif %}
                             </td>
                             <td>
-                                {% if sub.is_pdf %}
-                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger">فتح PDF</a>
-                                {% else %}
-                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">فتح Word</a>
-                                {% endif %}
                                 {% if sub.full_paper_file %}
-                                    <br><a href="{{ sub.full_paper_file.url }}" target="_blank" class="btn btn-sm btn-success mt-1">الورقة الكاملة</a>
+                                    <a href="{{ sub.full_paper_file.url }}" target="_blank" class="btn btn-sm btn-success fw-bold">
+                                        <i class="bi bi-file-earmark-text-fill"></i> فتح الورقة الكاملة
+                                    </a>
+                                {% elif sub.file %}
+                                    <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-file-earmark-arrow-down"></i> فتح الملخص
+                                    </a>
                                 {% endif %}
                             </td>
                             <td>
@@ -95,6 +100,7 @@
                                     {% if sub.status == 'accepted' %}bg-success
                                     {% elif sub.status == 'rejected' %}bg-danger
                                     {% elif sub.status == 'abstract_accepted' %}bg-info text-dark
+                                    {% elif sub.status == 'full_paper_submitted' %}bg-warning text-dark
                                     {% elif sub.status == 'scientific_evaluated' %}bg-primary
                                     {% elif sub.status == 'revision_required' %}bg-warning text-dark
                                     {% else %}bg-secondary{% endif %}">
@@ -128,7 +134,7 @@
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-bold">توصية اللجنة العلمية *</label>
                                                     <select name="recommendation" id="recSelect{{ sub.id }}" class="form-select" onchange="applyTemplate({{ sub.id }})" required>
-                                                        <option value="accept" {% if sub.scientific_recommendation == 'accept' %}selected{% endif %}>توصية بقبول المشاركة / الملخص</option>
+                                                        <option value="accept" {% if sub.scientific_recommendation == 'accept' %}selected{% endif %}>توصية بقبول المشاركة / الورقة</option>
                                                         <option value="revise" {% if sub.scientific_recommendation == 'revise' %}selected{% endif %}>توصية بقبول مشروط باجراء تعديلات</option>
                                                         <option value="reject" {% if sub.scientific_recommendation == 'reject' %}selected{% endif %}>توصية بالاعتذار عن عدم قبول المشاركة</option>
                                                     </select>
@@ -175,7 +181,7 @@ function applyTemplate(id) {
     if (!select || !textarea) return;
 
     if (select.value === 'accept') {
-        textarea.value = 'توصي اللجنة العلمية بقبول الملخص البحثي للمشاركة واستيفائه الشروط الاكاديمية، ونوصي بطلب تسليم النسخة الكاملة من البحث.';
+        textarea.value = 'توصي اللجنة العلمية بقبول الورقة البحثية للمشاركة واستيفائها الشروط الاكاديمية المعتمدة للمؤتمر.';
     } else if (select.value === 'revise') {
         textarea.value = 'توصي اللجنة العلمية بقبول الورقة شريطة اجراء التعديلات المنهجية والاكاديمية الموضحة واعادة تسليم النسخة المعدلة.';
     } else if (select.value === 'reject') {
