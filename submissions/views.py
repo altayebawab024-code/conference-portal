@@ -178,22 +178,27 @@ def reupload_file(request, tracking_code):
 
 
 def upload_full_paper(request, tracking_code):
+    """المرحلة الثانية: رفع الورقة العلمية الكاملة وترقية نوع المشاركة تلقائيا"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
 
-    if submission.status != 'abstract_accepted':
+    if submission.status not in ['abstract_accepted', 'full_paper_submitted']:
         messages.error(request, 'لا يمكن رفع الورقة الكاملة الا بعد قبول الملخص المبدئي.')
         return redirect('track_submission')
 
     if request.method == 'POST' and request.FILES.get('full_paper_file'):
-        submission.full_paper_file = request.FILES.get('full_paper_file')
-        submission.file = request.FILES.get('full_paper_file')
+        uploaded_paper = request.FILES.get('full_paper_file')
+        submission.full_paper_file = uploaded_paper
+        submission.file = uploaded_paper
+        
+        # ترقية نوع المشاركة تلقائيا الى ورقة علمية كاملة
+        submission.participation_type = 'full_paper'
         submission.status = 'full_paper_submitted'
         submission.editor_notes = 'تم تسليم الورقة العلمية الكاملة من قبل الباحث وبانتظار الاحالة للتحكيم النهائي.'
 
         try:
             submission.full_clean()
             submission.save()
-            messages.success(request, 'تم تسليم ورقتكم العلمية الكاملة بنجاح! سيتم تحكيمها واصدار بطاقة دخول المؤتمر قريبا.')
+            messages.success(request, 'تم تسليم ورقتكم العلمية الكاملة بنجاح! تم ترقية المشاركة الى (ورقة علمية كاملة) وجار التحكيم النهائي.')
         except ValidationError as e:
             messages.error(request, ' '.join(sum(e.message_dict.values(), [])))
 
