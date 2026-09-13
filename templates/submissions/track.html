@@ -22,35 +22,39 @@
     {% if submission %}
         <div class="card card-custom p-4 p-md-5 mb-4">
             
+            <!-- ترويسة تفاصيل البحث -->
             <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 border-bottom mb-4">
                 <div>
                     <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-1">{{ submission.tracking_code }}</span>
-                    <h4 class="fw-bold text-dark mb-0">{{ submission.title }}</h4>
-                    <p class="text-muted small mb-0">{{ submission.author_name }} | {{ submission.get_university_display }} ({{ submission.faculty }} - {{ submission.department }})</p>
+                    <h4 class="fw-bold text-dark mb-1">{{ submission.title }}</h4>
+                    <p class="text-muted small mb-0">
+                        {{ submission.author_name }} | {{ submission.get_university_display }} ({{ submission.faculty }} - {{ submission.department }})
+                    </p>
                 </div>
-                <div>
+                <div class="text-end">
+                    <span class="badge bg-secondary d-block mb-1 fs-6">{{ submission.get_participation_type_display }}</span>
                     <span class="badge 
                         {% if submission.status == 'accepted' or submission.status == 'abstract_accepted' %}bg-success
                         {% elif submission.status == 'rejected' or submission.status == 'defective_file' %}bg-danger
                         {% elif submission.status == 'revision_required' %}bg-warning text-dark
-                        {% else %}bg-primary{% endif %} fs-6 px-3 py-2">
+                        {% else %}bg-primary{% endif %} fs-6 px-3 py-1">
                         {{ submission.get_status_display }}
                     </span>
                 </div>
             </div>
 
-            <!-- شريط التقدم المرئي الدقيق 100% -->
+            <!-- شريط التقدم المرئي المنضبط للمرحلتين -->
             <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-bezier2"></i> مسار تقييم وتحكيم البحث:</h6>
             <div class="d-flex flex-wrap justify-content-between align-items-center text-center gap-2 p-3 bg-light rounded-3 mb-4">
                 
-                <!-- 1. استلام الملخص (أخضر دائماً) -->
+                <!-- 1. استلام الملخص (مكتمل دائما) -->
                 <span class="badge bg-success p-2 small">
                     1. استلام الملخص <i class="bi bi-check-circle-fill"></i>
                 </span>
                 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- 2. الفحص الإداري (أخضر فقط بعد اجتياز الفحص) -->
+                <!-- 2. الفحص الاداري -->
                 {% if submission.status == 'under_scientific_review' or submission.status == 'scientific_evaluated' or submission.status == 'abstract_accepted' or submission.status == 'full_paper_submitted' or submission.status == 'accepted' or submission.status == 'revision_required' or submission.status == 'rejected' %}
                     <span class="badge bg-success text-white p-2 small">
                         2. الفحص الاداري <i class="bi bi-check-circle-fill"></i>
@@ -63,7 +67,7 @@
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- 3. قبول الملخص (أخضر فقط بعد قبول الملخص أو الورقة الكاملة) -->
+                <!-- 3. قبول الملخص -->
                 {% if submission.status == 'abstract_accepted' or submission.status == 'full_paper_submitted' or submission.status == 'accepted' %}
                     <span class="badge bg-success text-white p-2 small">
                         3. قبول الملخص <i class="bi bi-check-circle-fill"></i>
@@ -76,7 +80,7 @@
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- 4. تسليم الورقة الكاملة (أخضر فقط بعد رفع الورقة الكاملة) -->
+                <!-- 4. تسليم الورقة الكاملة -->
                 {% if submission.status == 'full_paper_submitted' or submission.status == 'accepted' %}
                     <span class="badge bg-success text-white p-2 small">
                         4. تسليم الورقة الكاملة <i class="bi bi-check-circle-fill"></i>
@@ -89,7 +93,7 @@
 
                 <i class="bi bi-arrow-left text-muted"></i>
 
-                <!-- 5. بطاقة دخول المؤتمر (أخضر فقط عند القبول النهائي) -->
+                <!-- 5. بطاقة دخول المؤتمر -->
                 {% if submission.status == 'accepted' %}
                     <span class="badge bg-success text-white p-2 small">
                         5. بطاقة دخول المؤتمر <i class="bi bi-check-circle-fill"></i>
@@ -102,47 +106,61 @@
 
             </div>
 
-            <!-- تفاصيل كل مرحلة -->
-            {% if submission.status == 'abstract_accepted' %}
-                <div class="alert alert-success p-4 mb-4">
-                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> مبارك! تم قبول ملخصكم البحثي مبدئيا</h5>
-                    <p class="mb-3 text-dark">
-                        {{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة واللجنة العلمية افادتكم بقبول ملخصكم البحثي، يرجى تسليم النسخة الكاملة من البحث في موعد اقصاه 10 نوفمبر 2026م." }}
-                    </p>
-                    
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        <a href="{% url 'abstract_acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-outline-success fw-bold">
-                            <i class="bi bi-printer-fill me-1"></i> طباعة اشعار قبول الملخص المبدئي
+            <!-- ارشيف المرحلة الاولى (الملخص): يظل ظاهرا دائما بعد قبول الملخص كتوثيق رسمي -->
+            {% if submission.status == 'abstract_accepted' or submission.status == 'full_paper_submitted' or submission.status == 'accepted' %}
+                <div class="p-3 bg-light rounded-3 border mb-4 d-flex flex-wrap justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-success mb-1">المرحلة الاولى (الملخص البحثي): تم القبول والاعتماد</span>
+                        <div class="small text-muted">تم قبول الملخص المبدئي بنجاح وحفظه في سجل المؤتمر.</div>
+                    </div>
+                    <div>
+                        <a href="{% url 'abstract_acceptance_pass' submission.tracking_code %}" target="_blank" class="btn btn-sm btn-outline-success fw-bold">
+                            <i class="bi bi-printer-fill me-1"></i> طباعة اشعار قبول الملخص
                         </a>
                     </div>
-
-                    <div class="bg-white p-4 rounded-3 border border-2 border-primary">
-                        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-cloud-arrow-up-fill"></i> رفع وتسليم الورقة العلمية الكاملة (المرحلة الثانية):</h6>
-                        <p class="small text-muted mb-3">يرجى رفع ملف البحث الكامل (Word او PDF) بحجم لا يتجاوز 15 ميجابايت قبل 10 نوفمبر 2026م.</p>
-                        
-                        <form method="post" action="{% url 'upload_full_paper' submission.tracking_code %}" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="input-group">
-                                <input type="file" name="full_paper_file" class="form-control" accept=".pdf,.doc,.docx" required>
-                                <button type="submit" class="btn btn-primary fw-bold px-4">تسليم الورقة الكاملة الان</button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
             {% endif %}
 
+            <!-- حالة 1: تم قبول الملخص وبانتظار رفع الورقة الكاملة -->
+            {% if submission.status == 'abstract_accepted' %}
+                <div class="bg-white p-4 rounded-3 border border-2 border-primary mb-4 shadow-sm">
+                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-cloud-arrow-up-fill"></i> المرحلة الثانية: تسليم الورقة العلمية الكاملة (Full Paper)</h5>
+                    <p class="small text-muted mb-3">
+                        يسر اللجنة العلمية استقبال نسختكم الكاملة من البحث (Word او PDF) بحجم لا يتجاوز 15 ميجابايت في موعد اقصاه <strong>10 نوفمبر 2026م</strong>، تمهيدا لاصدار بطاقة الدخول الرسمية لجلسات المؤتمر.
+                    </p>
+                    
+                    <form method="post" action="{% url 'upload_full_paper' submission.tracking_code %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="file" name="full_paper_file" class="form-control" accept=".pdf,.doc,.docx" required>
+                            <button type="submit" class="btn btn-primary fw-bold px-4">تسليم الورقة الكاملة الان</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+
+            <!-- حالة 2: تم تسليم الورقة الكاملة بنجاح وهي قيد التحكيم النهائي -->
             {% if submission.status == 'full_paper_submitted' %}
                 <div class="alert alert-info p-4 mb-4">
-                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-clock-history"></i> تم استلام ورقتكم العلمية الكاملة بنجاح</h5>
-                    <p class="mb-0 text-dark">
-                        الورقة قيد المراجعة والتحكيم النهائي من اللجنة العلمية، وسيتم اصدار بطاقة دخول المؤتمر فور انتهاء الاعتماد.
+                    <h5 class="fw-bold text-primary mb-2"><i class="bi bi-check-circle-fill"></i> تم استلام ورقتكم العلمية الكاملة بنجاح (المرحلة الثانية)</h5>
+                    <p class="mb-3 text-dark">
+                        تم ترقية مشاركتكم رسميا الى <strong>ورقة علمية كاملة</strong>، والملف قيد التحكيم والمراجعة النهائية من قبل اللجنة العلمية لاصدار القرار النهائي وبطاقة دخول المؤتمر.
                     </p>
+                    {% if submission.full_paper_file %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small fw-bold text-muted">الملف المسلم:</span>
+                            <a href="{{ submission.full_paper_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-file-earmark-arrow-down-fill"></i> استعراض وتحميل الورقة الكاملة المرفوعة
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
 
+            <!-- حالة 3: القبول النهائي وبطاقة دخول المؤتمر -->
             {% if submission.status == 'accepted' %}
                 <div class="alert alert-success p-4 mb-4">
-                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill"></i> تهانينا! تم قبول البحث كاملا للمشاركة في المؤتمر</h5>
+                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-award-fill"></i> تهانينا! تم قبول البحث كاملا للمشاركة في المؤتمر</h5>
                     <p class="mb-3 text-dark">{{ submission.final_decision_notes|default:"يسر عمادة البحث العلمي والنشر والترجمة افادتكم باعتماد قبول ورقتكم العلمية للمشاركة في جلسات المؤتمر المنعقدة بتاريخ 26 و 27 ديسمبر 2026م." }}</p>
                     
                     <div class="text-center pt-3 border-top border-success">
