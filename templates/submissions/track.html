@@ -22,13 +22,12 @@
     {% if submission %}
         <div class="card card-custom p-4 p-md-5 mb-4">
             
-            <!-- ترويسة تفاصيل البحث -->
             <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 border-bottom mb-4">
                 <div>
                     <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-1">{{ submission.tracking_code }}</span>
                     <h4 class="fw-bold text-dark mb-1">{{ submission.title }}</h4>
                     <p class="text-muted small mb-0">
-                        {{ submission.author_name }} | {{ submission.get_university_display }} ({{ submission.faculty }} - {{ submission.department }})
+                        {{ submission.author_name }} | {{ submission.university }} ({{ submission.faculty }} - {{ submission.department }})
                     </p>
                 </div>
                 <div class="text-end">
@@ -106,7 +105,7 @@
 
             </div>
 
-            <!-- ارشيف المرحلة الاولى (الملخص): يظل ظاهرا دائما بعد قبول الملخص كتوثيق رسمي -->
+            <!-- ارشيف المرحلة الاولى (الملخص) -->
             {% if submission.status == 'abstract_accepted' or submission.status == 'full_paper_submitted' or submission.status == 'accepted' %}
                 <div class="p-3 bg-light rounded-3 border mb-4 d-flex flex-wrap justify-content-between align-items-center">
                     <div>
@@ -121,21 +120,27 @@
                 </div>
             {% endif %}
 
-            <!-- حالة 1: تم قبول الملخص وبانتظار رفع الورقة الكاملة -->
+            <!-- حالة 1: تم قبول الملخص وبانتظار رفع الورقة الكاملة (20 - 26 نوفمبر) -->
             {% if submission.status == 'abstract_accepted' %}
                 <div class="bg-white p-4 rounded-3 border border-2 border-primary mb-4 shadow-sm">
                     <h5 class="fw-bold text-primary mb-2"><i class="bi bi-cloud-arrow-up-fill"></i> المرحلة الثانية: تسليم الورقة العلمية الكاملة (Full Paper)</h5>
                     <p class="small text-muted mb-3">
-                        يسر اللجنة العلمية استقبال نسختكم الكاملة من البحث (Word او PDF) بحجم لا يتجاوز 15 ميجابايت في موعد اقصاه <strong>10 نوفمبر 2026م</strong>، تمهيدا لاصدار بطاقة الدخول الرسمية لجلسات المؤتمر.
+                        يسر اللجنة العلمية استقبال نسختكم الكاملة من البحث (Word او PDF) بحجم لا يتجاوز 15 ميجابايت في الفترة المحددة من <strong>20 نوفمبر الى 26 نوفمبر 2026م</strong>، تمهيدا لاصدار بطاقة الدخول الرسمية لجلسات المؤتمر.
                     </p>
                     
-                    <form method="post" action="{% url 'upload_full_paper' submission.tracking_code %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="file" name="full_paper_file" class="form-control" accept=".pdf,.doc,.docx" required>
-                            <button type="submit" class="btn btn-primary fw-bold px-4">تسليم الورقة الكاملة الان</button>
+                    {% if is_full_paper_open %}
+                        <form method="post" action="{% url 'upload_full_paper' submission.tracking_code %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="file" name="full_paper_file" class="form-control" accept=".pdf,.doc,.docx" required>
+                                <button type="submit" class="btn btn-primary fw-bold px-4">تسليم الورقة الكاملة الان</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning mb-0 small">
+                            ملاحظة: تفتح نافذة رفع الاوراق الكاملة رسميا في الفترة من 20 الى 26 نوفمبر 2026م.
                         </div>
-                    </form>
+                    {% endif %}
                 </div>
             {% endif %}
 
