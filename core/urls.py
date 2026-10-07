@@ -6,11 +6,11 @@ from submissions import views as submissions_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),  # مسارات الدخول والخروج
-    path('', include('submissions.urls')),                  # مسارات منصة المؤتمرات
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('submissions.urls')),
 
-    # مسار آمن لتحميل وفتح ملفات الأبحاث في الإنتاج على Render
-    path('media/submissions_files/<str:filename>', submissions_views.serve_submission_file, name='serve_submission_file'),
+    # مسار عام وشامل لفتح وتحميل ملفات الملخصات والابحاث في سيرفر الجامعة وسيرفر بايثون اني وير
+    path('media/<path:filepath>', submissions_views.serve_media_file, name='serve_media_file'),
 ]
 
 if settings.DEBUG:
