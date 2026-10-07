@@ -29,17 +29,20 @@
         </div>
     {% endif %}
 
+    <!-- Hero Header الفاخر -->
     <div class="card card-custom p-5 mb-4 text-white text-center" style="background: linear-gradient(135deg, #091e3a 0%, #10375c 70%, #001f54 100%);">
         <div class="py-2">
             <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-3 rounded-circle p-1 bg-white shadow" style="width: 95px; height: 95px; object-fit: contain;">
             <br>
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 fs-6">جامعة البطانة - عمادة البحث العلمي والنشر والترجمة</span>
             <h1 class="display-6 fw-bold mb-2">المؤتمر العلمي الاول لجامعة البطانة</h1>
-            <h4 class="text-warning fw-bold mb-3">بعنوان: دور البحث العلمي في التنمية المستدامة واعادة الاعمار</h4>
+            <h4 class="text-warning fw-bold mb-2">بعنوان: دور البحث العلمي في التنمية المستدامة واعادة الاعمار</h4>
+            <h5 class="text-light fw-normal mb-3" style="font-size: 1.05rem;">البحث العلمي والابتكار واعادة الاعمار وتحقيق التنمية المستدامة</h5>
             <p class="lead text-light fst-italic mb-4">"بالعلم نعيد البناء، وبالمعرفة نصنع المستقبل"</p>
 
+            <!-- العداد التنازلي لموعد 15 اكتوبر 2026م -->
             <div class="mb-4">
-                <small class="text-warning fw-bold d-block mb-2">الزمن المتبقي لانتهاء موعد استلام الملخصات (10 اكتوبر 2026م):</small>
+                <small class="text-warning fw-bold d-block mb-2">الزمن المتبقي لانتهاء موعد استلام الملخصات (15 اكتوبر 2026م):</small>
                 <div class="d-flex justify-content-center gap-2" id="abstractCountdown">
                     <div class="countdown-box"><div class="countdown-num" id="cd-days">--</div><small class="d-block text-white">يوم</small></div>
                     <div class="countdown-box"><div class="countdown-num" id="cd-hours">--</div><small class="d-block text-white">ساعة</small></div>
@@ -59,11 +62,12 @@
         </div>
     </div>
 
+    <!-- جدول التواريخ والمواعيد الرسمية المحدثة -->
     <div class="row g-3 mb-4 text-center">
         <div class="col-md-3">
             <div class="card card-custom p-3 border-bottom border-warning border-4 h-100">
                 <span class="text-muted small fw-bold">اخر موعد لاستلام الملخصات</span>
-                <h5 class="fw-bold text-dark mt-1">10 اكتوبر 2026م</h5>
+                <h5 class="fw-bold text-dark mt-1">15 اكتوبر 2026م</h5>
             </div>
         </div>
         <div class="col-md-3">
@@ -74,8 +78,8 @@
         </div>
         <div class="col-md-3">
             <div class="card card-custom p-3 border-bottom border-info border-4 h-100">
-                <span class="text-muted small fw-bold">اخر موعد لتسليم الورقة كاملة</span>
-                <h5 class="fw-bold text-info mt-1">10 نوفمبر 2026م</h5>
+                <span class="text-muted small fw-bold">فترة تسليم الاوراق الكاملة</span>
+                <h5 class="fw-bold text-info mt-1">20 الى 26 نوفمبر 2026م</h5>
             </div>
         </div>
         <div class="col-md-3">
@@ -86,6 +90,7 @@
         </div>
     </div>
 
+    <!-- المحاور العلمية الرسمية -->
     <div class="card card-custom p-4 mb-4">
         <h4 class="fw-bold text-dark mb-4 text-center"><i class="bi bi-diagram-3-fill text-primary"></i> المحاور العلمية المعتمدة للمؤتمر</h4>
         <div class="row g-3">
@@ -100,16 +105,17 @@
         </div>
     </div>
 
+    <!-- شروط وضوابط المشاركة وموجهات الكتابة -->
     <div class="row g-4 mb-4">
         <div class="col-md-6">
             <div class="card card-custom p-4 h-100">
                 <h5 class="fw-bold text-primary mb-3"><i class="bi bi-shield-check"></i> شروط وضوابط المشاركة</h5>
                 <ul class="small text-muted mb-0 lh-lg">
+                    <li>المشاركة متاحة لكافة الباحثين واعضاء هيئة التدريس بالجامعات والمراكز البحثية السودانية.</li>
                     <li>ان يكون البحث اصيلا ولم يسبق نشره او تقديمه لدى مؤتمر او جهة علمية اخرى.</li>
                     <li>ان يرتبط البحث بشكل مباشر باحد محاور المؤتمر المعتمدة.</li>
-                    <li>تخضع جميع البحوث المقدمة للتحكيم العلمي من قبل اللجنة العلمية.</li>
+                    <li>تخضع جميع البحوث المقدمة للتحكيم العلمي من قبل اللجنة العلمية للمؤتمر.</li>
                     <li>يلتزم الباحث بالامانة العلمية وقواعد الاقتباس والتوثيق الاكاديمي المعتمد.</li>
-                    <li>ان تمثل الاوراق العلمية مشروعات عملية واضحة المعالم قابلة للتنفيذ.</li>
                     <li>تكتب البحوث باللغة العربية او الانجليزية.</li>
                 </ul>
             </div>
@@ -129,30 +135,31 @@
         </div>
     </div>
 
+    <!-- الاسئلة الشائعة -->
     <div class="card card-custom p-4 mb-4">
         <h4 class="fw-bold text-dark mb-3 text-center"><i class="bi bi-question-circle-fill text-primary"></i> الاسئلة الشائعة للباحثين</h4>
         <div class="accordion" id="faqAccordion">
             <div class="accordion-item border-0 mb-2 rounded shadow-sm">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                        ما هي المرحلة الاولى للتقديم على المؤتمر؟
+                        ما هو اخر موعد لاستقبال الملخصات؟
                     </button>
                 </h2>
                 <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                     <div class="accordion-body small text-muted">
-                        المرحلة الاولى هي رفع ملخص بحثي (Abstract) في حدود صفحة واحدة يوضح فكرة ومنهجية البحث قبل موعد 10 اكتوبر 2026م.
+                        المرحلة الاولى تنتهي بتاريخ <strong>15 اكتوبر 2026م</strong>، ويتم رفع ملخص بحثي (Abstract) في حدود صفحة واحدة يوضح فكرة ومنهجية البحث.
                     </div>
                 </div>
             </div>
             <div class="accordion-item border-0 mb-2 rounded shadow-sm">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                        متى يتم تسليم الورقة العلمية الكاملة (Full Paper)؟
+                        ما هي الفترة المحددة لتسليم الورقة العلمية الكاملة (Full Paper)؟
                     </button>
                 </h2>
                 <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                     <div class="accordion-body small text-muted">
-                        بعد تحكيم الملخصات واصدار اشعار قبول الملخص بتاريخ 20 اكتوبر 2026م، يتاح للباحث المقبول رفع نسخته الكاملة عبر صفحة التتبع قبل 10 نوفمبر 2026م.
+                        بعد قبول الملخص المبدئي، تفتح خانة تسليم الاوراق الكاملة في الفترة من <strong>20 نوفمبر الى 26 نوفمبر 2026م</strong> عبر صفحة التتبع.
                     </div>
                 </div>
             </div>
@@ -164,13 +171,14 @@
                 </h2>
                 <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                     <div class="accordion-body small text-muted">
-                        بمجرد اعتماد الورقة العلمية الكاملة من هيئة التحرير، يظهر زر طباعة بطاقة دخول المؤتمر في صفحة التتبع الخاصة بالباحث لطباعتها وحضور الجلسات.
+                        بمجرد تحكيم واعتماد الورقة العلمية الكاملة من هيئة التحرير، يظهر زر طباعة بطاقة دخول المؤتمر في صفحة التتبع الخاصة بالباحث لحضور الجلسات المنعقدة يومي 26 و 27 ديسمبر 2026م.
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- قيادة المؤتمر -->
     <div class="card card-custom p-4 text-center bg-light">
         <h6 class="fw-bold text-dark mb-1">رئيس اللجنة العلمية للمؤتمر:</h6>
         <h5 class="fw-bold text-primary mb-0">البروفيسور / سمية خليفة محمد المهدي</h5>
@@ -181,8 +189,9 @@
 
 {% block extra_js %}
 <script>
+// كود تشغيل العداد التنازلي لموعد 15 اكتوبر 2026م
 function runCountdown() {
-    const targetDate = new Date('October 10, 2026 23:59:59').getTime();
+    const targetDate = new Date('October 15, 2026 23:59:59').getTime();
     const now = new Date().getTime();
     const diff = targetDate - now;
 
