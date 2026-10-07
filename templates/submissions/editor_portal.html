@@ -46,7 +46,7 @@
         <form method="get" class="row g-2 align-items-end">
             <div class="col-md-4">
                 <label class="form-label small fw-bold">بحث</label>
-                <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-sm" placeholder="ابحث بالكود، اسم الباحث، الكلية، القسم...">
+                <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-sm" placeholder="ابحث بالكود، اسم الباحث، الجامعة، الكلية، القسم...">
             </div>
             <div class="col-md-3">
                 <label class="form-label small fw-bold">المحور العلمي</label>
@@ -78,7 +78,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>كود التتبع</th>
-                        <th>الباحث والمؤسسة</th>
+                        <th>الباحث والجامعة</th>
                         <th>الكلية والقسم الاكاديمي</th>
                         <th>عنوان المشاركة ونوعها</th>
                         <th>الملف</th>
@@ -93,7 +93,7 @@
                             <td class="fw-bold text-primary">{{ sub.tracking_code }}</td>
                             <td>
                                 <strong>{{ sub.author_name }}</strong><br>
-                                <span class="text-muted small">{{ sub.get_university_display }}</span>
+                                <span class="text-muted small">{{ sub.university }}</span>
                             </td>
                             <td>
                                 <strong>{{ sub.faculty }}</strong><br>
@@ -203,7 +203,7 @@
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-bold">القرار المعتمد للباحث *</label>
                                                     <select name="final_decision" class="form-select" required>
-                                                        <option value="abstract_accept" {% if sub.status == 'abstract_accepted' %}selected{% endif %}>المرحلة 1: قبول الملخص المبدئي (وطلب تسليم الورقة الكاملة)</option>
+                                                        <option value="abstract_accept" {% if sub.status == 'abstract_accepted' %}selected{% endif %}>المرحلة 1: قبول الملخص المبدئي (فترة تسليم الورقة: 20 الى 26 نوفمبر)</option>
                                                         <option value="final_accept" {% if sub.status == 'accepted' %}selected{% endif %}>المرحلة 2: قبول البحث نهائيا واصدار بطاقة دخول المؤتمر</option>
                                                         <option value="revise" {% if sub.status == 'revision_required' %}selected{% endif %}>طلب اجراء تعديلات اكاديمية</option>
                                                         <option value="reject" {% if sub.status == 'rejected' %}selected{% endif %}>اعتذار عن عدم قبول المشاركة</option>
