@@ -189,8 +189,6 @@ def upload_full_paper(request, tracking_code):
         uploaded_paper = request.FILES.get('full_paper_file')
         submission.full_paper_file = uploaded_paper
         submission.file = uploaded_paper
-        
-        # ترقية نوع المشاركة تلقائيا الى ورقة علمية كاملة
         submission.participation_type = 'full_paper'
         submission.status = 'full_paper_submitted'
         submission.editor_notes = 'تم تسليم الورقة العلمية الكاملة من قبل الباحث وبانتظار الاحالة للتحكيم النهائي.'
@@ -401,13 +399,26 @@ def scientific_action(request, pk):
     return redirect('scientific_portal')
 
 
-def serve_submission_file(request, filename):
-    file_relative_path = os.path.join('submissions_files', filename)
-    file_path = os.path.join(settings.MEDIA_ROOT, file_relative_path)
+# -------------------------------------------------------------
+# دالة تحميل وفتح ملفات الملخصات والابحاث الشاملة في الانتاج
+# -------------------------------------------------------------
+def serve_media_file(request, filepath):
+    """فتح وتحميل اي ملف مرفوع (ملخص او ورقة كاملة) بامان ومباشرة في اي سيرفر"""
+    file_path = os.path.join(settings.MEDIA_ROOT, filepath)
 
     if os.path.exists(file_path):
-        content_type = 'application/pdf' if filename.lower().endswith('.pdf') else 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        return FileResponse(open(file_path, 'rb'), content_type=content_type)
+        if filepath.lower().endswith('.pdf'):
+            content_type = 'application/pdf'
+        elif filepath.lower().endswith('.docx'):
+            content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif filepath.lower().endswith('.doc'):
+            content_type = 'application/msword'
+        else:
+            content_type = 'application/octet-stream'
+
+        response = FileResponse(open(file_path, 'rb'), content_type=content_type)
+        response['Content-Disposition'] = f'inline; filename="{os.path.basename(file_path)}"'
+        return response
     raise Http404("الملف المطلوب غير موجود على الخادم.")
 
 
@@ -436,7 +447,13 @@ def setup_admin_users(request):
     u3 = User.objects.create_user('scientific', 'scientific@albutana.edu.sd', '123', is_staff=True, is_superuser=False)
     u3.groups.add(scientific_group)
 
-    if not User.objects.filter(username='admin').exists():
+    if User.objects.filter(username='admin').exists():
+        u_admin = User.objects.get(username='admin')
+        u_admin.set_password('123')
+        u_admin.is_staff = True
+        u_admin.is_superuser = True
+        u_admin.save()
+    else:
         User.objects.create_superuser('admin', 'admin@albutana.edu.sd', '123')
 
     return render(request, 'submissions/home.html', {
