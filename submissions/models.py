@@ -17,17 +17,6 @@ def validate_file_size(file):
 class ConferenceSubmission(models.Model):
     """جدول مشاركات المؤتمر العلمي الاول لجامعة البطانة"""
 
-    UNIVERSITIES = [
-        ('butana', 'جامعة البطانة'),
-        ('gezira', 'جامعة الجزيرة'),
-        ('quran_taaseel', 'جامعة القران الكريم وتاصيل العلوم'),
-        ('managil', 'جامعة المناقل للعلوم والتكنولوجيا'),
-        ('imam_mahdi', 'جامعة الامام المهدي'),
-        ('bakht_ruda', 'جامعة بخت الرضا'),
-        ('sennar', 'جامعة سنار'),
-        ('other', 'جامعة النيل الأبيض'),
-    ]
-
     ACADEMIC_DOMAINS = [
         ('track_1', 'المحور الاول: البحث العلمي ودوره في التنمية المستدامة واعادة الاعمار بعد الحرب'),
         ('track_2', 'المحور الثاني: التكنولوجيا والابتكار والتحول الرقمي ودورها في التنمية المستدامة واعادة الاعمار'),
@@ -59,7 +48,7 @@ class ConferenceSubmission(models.Model):
         ('defective_file', 'تنبيه: الملف غير صالح (مطلوب اعادة الرفع)'),
         ('under_scientific_review', 'محال للجنة العلمية (قيد التحكيم)'),
         ('scientific_evaluated', 'تم انتهاء التحكيم (بانتظار اعتماد هيئة التحرير)'),
-        ('abstract_accepted', 'تم قبول الملخص مبدئيا (مطلوب تسليم الورقة الكاملة قبل 10 نوفمبر)'),
+        ('abstract_accepted', 'تم قبول الملخص مبدئيا (مطلوب تسليم الورقة الكاملة من 20 الى 26 نوفمبر)'),
         ('full_paper_submitted', 'تم استلام الورقة الكاملة (قيد المراجعة النهائية)'),
         ('revision_required', 'مطلوب اجراء تعديلات اكاديمية'),
         ('accepted', 'تم قبول البحث نهائيا (جاهز لطباعة بطاقة دخول المؤتمر)'),
@@ -68,10 +57,10 @@ class ConferenceSubmission(models.Model):
 
     tracking_code = models.CharField(max_length=50, unique=True, blank=True, verbose_name="كود تتبع الطلب")
 
-    # 1. بيانات الباحث
+    # 1. بيانات الباحث (حقل الجامعة مفتوح لكافة الجامعات السودانية)
     author_name = models.CharField(max_length=200, verbose_name="اسم الباحث كاملا")
     academic_degree = models.CharField(max_length=30, choices=ACADEMIC_DEGREES, default='researcher', verbose_name="الدرجة العلمية")
-    university = models.CharField(max_length=50, choices=UNIVERSITIES, default='butana', verbose_name="الجامعة / المؤسسة الاكاديمية")
+    university = models.CharField(max_length=250, verbose_name="الجامعة / المؤسسة الاكاديمية")
     faculty = models.CharField(max_length=200, default='', verbose_name="الكلية")
     department = models.CharField(max_length=200, default='', verbose_name="القسم الاكاديمي")
     email = models.EmailField(verbose_name="البريد الالكتروني للباحث")
@@ -87,7 +76,7 @@ class ConferenceSubmission(models.Model):
     participation_type = models.CharField(max_length=30, choices=PARTICIPATION_TYPES, default='abstract', verbose_name="نوع المشاركة")
     title = models.CharField(max_length=300, verbose_name="عنوان البحث")
 
-    # 3. ملفات المشاركة (ملف الملخص المبدئي + ملف الورقة الكاملة)
+    # 3. ملفات المشاركة
     file = models.FileField(
         upload_to='submissions_files/',
         verbose_name="ملف الملخص / البحث المرفوع (Word او PDF)",
@@ -115,7 +104,7 @@ class ConferenceSubmission(models.Model):
     editor_checked_at = models.DateTimeField(null=True, blank=True, verbose_name="تاريخ الفحص الاداري")
     editor_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='editor_managed_submissions', verbose_name="تم الفحص بواسطة رئيس التحرير")
 
-    # 6. تقييم اللجنة العلمية (داخلي وسري)
+    # 6. تقييم اللجنة العلمية (سري وداخلي)
     scientific_score = models.PositiveIntegerField(null=True, blank=True, verbose_name="درجة التحكيم العلمي (من 100 - سرية)")
     scientific_recommendation = models.CharField(max_length=30, null=True, blank=True, verbose_name="توصية اللجنة العلمية")
     scientific_decision_notes = models.TextField(null=True, blank=True, verbose_name="تقرير وتوصية اللجنة العلمية لرئيس التحرير")
