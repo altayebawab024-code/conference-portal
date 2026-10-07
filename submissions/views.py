@@ -1,4 +1,5 @@
 import os
+import datetime
 from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -11,6 +12,25 @@ from django.http import FileResponse, Http404
 from django.conf import settings
 from django.core.management import call_command
 from .models import ConferenceSubmission
+
+
+# -------------------------------------------------------------
+# التواريخ والمواعيد الرسمية للمؤتمر (نظام الاغلاق التلقائي)
+# -------------------------------------------------------------
+# اخر موعد لاستلام الملخصات: 15 اكتوبر 2026م الساعة 23:59
+ABSTRACT_DEADLINE = datetime.datetime(2026, 10, 15, 23, 59, 59)
+
+# اخر موعد لتسليم الورقة الكاملة: 26 نوفمبر 2026م الساعة 23:59
+FULL_PAPER_DEADLINE = datetime.datetime(2026, 11, 26, 23, 59, 59)
+
+
+def is_abstract_submission_open():
+    """التحقق هل باب التقديم للملخصات ما زال مفتوحا"""
+    return datetime.datetime.now() <= ABSTRACT_DEADLINE
+
+def is_full_paper_submission_open():
+    """التحقق هل باب تسليم الاوراق الكاملة ما زال مفتوحا"""
+    return datetime.datetime.now() <= FULL_PAPER_DEADLINE
 
 
 # -------------------------------------------------------------
@@ -70,16 +90,20 @@ def public_home(request):
         'accepted_submissions': accepted_submissions,
         'domains_count': domains_count,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
-        'universities': ConferenceSubmission.UNIVERSITIES,
+        'is_abstract_open': is_abstract_submission_open(),
     }
     return render(request, 'submissions/home.html', context)
 
 
 def submit_paper(request):
+    # فحص موعد الاغلاق التلقائي
+    if not is_abstract_submission_open():
+        return render(request, 'submissions/submit.html', {'is_closed': True})
+
     if request.method == 'POST':
         author_name = request.POST.get('author_name', '').strip()
         academic_degree = request.POST.get('academic_degree')
-        university = request.POST.get('university')
+        university = request.POST.get('university', '').strip()
         faculty = request.POST.get('faculty', '').strip()
         department = request.POST.get('department', '').strip()
         email = request.POST.get('email', '').strip()
@@ -118,10 +142,10 @@ def submit_paper(request):
             return redirect('submit_paper')
 
     context = {
-        'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'academic_degrees': ConferenceSubmission.ACADEMIC_DEGREES,
         'participation_types': ConferenceSubmission.PARTICIPATION_TYPES,
+        'is_closed': False,
     }
     return render(request, 'submissions/submit.html', context)
 
@@ -148,6 +172,7 @@ def track_submission(request):
     return render(request, 'submissions/track.html', {
         'submission': submission,
         'search_query': search_query,
+        'is_full_paper_open': is_full_paper_submission_open(),
     })
 
 
@@ -178,8 +203,12 @@ def reupload_file(request, tracking_code):
 
 
 def upload_full_paper(request, tracking_code):
-    """المرحلة الثانية: رفع الورقة العلمية الكاملة وترقية نوع المشاركة تلقائيا"""
+    """المرحلة الثانية: رفع الورقة العلمية الكاملة (مفتوح حتى 26 نوفمبر 2026م)"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
+
+    if not is_full_paper_submission_open():
+        messages.error(request, 'نعتذر، انتهت فترة تسليم الاوراق العلمية الكاملة بتاريخ 26 نوفمبر 2026م.')
+        return redirect('track_submission')
 
     if submission.status not in ['abstract_accepted', 'full_paper_submitted']:
         messages.error(request, 'لا يمكن رفع الورقة الكاملة الا بعد قبول الملخص المبدئي.')
@@ -226,7 +255,6 @@ def acceptance_pass(request, tracking_code):
 def editor_portal(request):
     status_filter = request.GET.get('status', '')
     domain_filter = request.GET.get('domain', '')
-    university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
     submissions = ConferenceSubmission.objects.all()
@@ -235,12 +263,11 @@ def editor_portal(request):
         submissions = submissions.filter(status=status_filter)
     if domain_filter:
         submissions = submissions.filter(academic_domain=domain_filter)
-    if university_filter:
-        submissions = submissions.filter(university=university_filter)
     if search_query:
         submissions = submissions.filter(
             Q(tracking_code__icontains=search_query) |
             Q(author_name__icontains=search_query) |
+            Q(university__icontains=search_query) |
             Q(title__icontains=search_query) |
             Q(faculty__icontains=search_query) |
             Q(department__icontains=search_query)
@@ -259,12 +286,10 @@ def editor_portal(request):
         'evaluated_count': evaluated_count,
         'abstract_accepted_count': abstract_accepted_count,
         'accepted_count': accepted_count,
-        'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'submission_statuses': ConferenceSubmission.SUBMISSION_STATUS,
         'status_filter': status_filter,
         'domain_filter': domain_filter,
-        'university_filter': university_filter,
         'search_query': search_query,
     }
     return render(request, 'submissions/editor_portal.html', context)
@@ -331,7 +356,6 @@ def editor_final_decision(request, pk):
 def scientific_portal(request):
     domain_filter = request.GET.get('domain', '')
     status_filter = request.GET.get('status', '')
-    university_filter = request.GET.get('university', '')
     search_query = request.GET.get('q', '').strip()
 
     submissions = ConferenceSubmission.objects.exclude(status__in=['submitted', 'defective_file'])
@@ -340,12 +364,11 @@ def scientific_portal(request):
         submissions = submissions.filter(academic_domain=domain_filter)
     if status_filter:
         submissions = submissions.filter(status=status_filter)
-    if university_filter:
-        submissions = submissions.filter(university=university_filter)
     if search_query:
         submissions = submissions.filter(
             Q(tracking_code__icontains=search_query) |
             Q(author_name__icontains=search_query) |
+            Q(university__icontains=search_query) |
             Q(title__icontains=search_query) |
             Q(department__icontains=search_query)
         )
@@ -361,12 +384,10 @@ def scientific_portal(request):
         'evaluated_count': evaluated_count,
         'abstract_accepted_count': abstract_accepted_count,
         'accepted_count': accepted_count,
-        'universities': ConferenceSubmission.UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'submission_statuses': ConferenceSubmission.SUBMISSION_STATUS,
         'domain_filter': domain_filter,
         'status_filter': status_filter,
-        'university_filter': university_filter,
         'search_query': search_query,
     }
     return render(request, 'submissions/scientific_portal.html', context)
@@ -399,11 +420,7 @@ def scientific_action(request, pk):
     return redirect('scientific_portal')
 
 
-# -------------------------------------------------------------
-# دالة تحميل وفتح ملفات الملخصات والابحاث الشاملة في الانتاج
-# -------------------------------------------------------------
 def serve_media_file(request, filepath):
-    """فتح وتحميل اي ملف مرفوع (ملخص او ورقة كاملة) بامان ومباشرة في اي سيرفر"""
     file_path = os.path.join(settings.MEDIA_ROOT, filepath)
 
     if os.path.exists(file_path):
