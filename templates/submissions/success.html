@@ -15,6 +15,7 @@
             width: 100%;
             border: 2px solid #000 !important;
             box-shadow: none !important;
+            padding: 25px !important;
         }
         .no-print { display: none !important; }
     }
@@ -22,7 +23,12 @@
         background-color: #ffffff;
         border: 3px double #10375c;
         border-radius: 12px;
-        padding: 40px;
+        padding: 35px;
+    }
+    .header-logo {
+        width: 75px;
+        height: 75px;
+        object-fit: contain;
     }
 </style>
 {% endblock %}
@@ -40,22 +46,24 @@
 
     <div class="receipt-box shadow mb-4">
         
-        <div class="text-center pb-3 border-bottom border-2 border-dark mb-4">
-            <div class="d-flex justify-content-between align-items-center px-2 mb-2">
-                <div class="text-start small fw-bold">
-                    جمهورية السودان<br>
-                    وزارة التعليم العالي والبحث العلمي<br>
-                    <strong>جامعة البطانة</strong><br>
-                    عمادة البحث العلمي والنشر والترجمة
+        <!-- ترويسة الاشعار الرسمية مع دعم شعارين (شعار الجامعة + شعار المؤتمر PNG) -->
+        <div class="border-bottom border-2 border-dark pb-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center">
+                    <img src="{% static 'img/logo.png' %}" alt="جامعة البطانة" class="header-logo">
+                    <div class="small fw-bold mt-1">جامعة البطانة</div>
                 </div>
-                <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" style="width: 75px; height: 75px; object-fit: contain;">
-                <div class="text-end small fw-bold">
-                    المؤتمر العلمي الاول لجامعة البطانة<br>
-                    ملتقى جامعات قطاع الوسط<br>
-                    اللجنة العلمية للمؤتمر
+                <div class="text-center px-2">
+                    <div class="small fw-bold text-muted">جمهورية السودان - وزارة التعليم العالي والبحث العلمي</div>
+                    <h5 class="fw-bold text-dark mb-1">المؤتمر العلمي الاول لجامعة البطانة</h5>
+                    <h6 class="fw-bold text-primary mb-1">العنوان: البحث العلمي والابتكار لاعادة الاعمار وتحقيق التنمية المستدامة في السودان</h6>
+                    <div class="small fw-bold text-secondary mb-2">عمادة البحث العلمي والنشر والترجمة</div>
+                    <span class="badge bg-dark text-white px-3 py-1">اشعار استلام رسمي لمعاملة بحثية</span>
+                </div>
+                <div class="text-center">
+                    <img src="{% static 'img/conf_logo.png' %}" alt="شعار المؤتمر" class="header-logo" onerror="this.style.display='none'">
                 </div>
             </div>
-            <span class="badge bg-dark text-white px-4 py-2 mt-1 fs-6">اشعار استلام رسمي لمعاملة بحثية</span>
         </div>
 
         <div class="alert alert-warning border border-warning text-center py-3 mb-4">
@@ -69,11 +77,11 @@
                 <td class="fw-bold text-dark">{{ submission.author_name }} ({{ submission.get_academic_degree_display }})</td>
             </tr>
             <tr>
-                <th class="table-light">الجامعة</th>
-                <td class="fw-bold text-primary">{{ submission.get_university_display }}</td>
+                <th class="table-light">الجامعة / المؤسسة الاكاديمية</th>
+                <td class="fw-bold text-primary fs-6">{{ submission.university }}</td>
             </tr>
             <tr>
-                <th class="table-light">الكلية والقسم</th>
+                <th class="table-light">الكلية والقسم الاكاديمي</th>
                 <td>{{ submission.faculty }} - {{ submission.department }}</td>
             </tr>
             <tr>
