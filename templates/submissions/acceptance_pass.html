@@ -18,9 +18,14 @@
             background-color: #ffffff;
             border: 4px double #10375c;
             border-radius: 16px;
-            padding: 40px;
+            padding: 35px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             position: relative;
+        }
+        .header-logo {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
         }
         @media print {
             body { background: none; }
@@ -29,7 +34,7 @@
                 box-shadow: none !important;
                 border: 3px double #000 !important;
                 margin: 0 !important;
-                padding: 30px !important;
+                padding: 25px !important;
             }
         }
     </style>
@@ -47,27 +52,27 @@
 
         <div class="pass-card">
             
-            <div class="d-flex justify-content-between align-items-center border-bottom border-2 border-dark pb-3 mb-4">
-                <div class="text-start small fw-bold">
-                    جمهورية السودان<br>
-                    وزارة التعليم العالي والبحث العلمي<br>
-                    <strong>جامعة البطانة</strong><br>
-                    عمادة البحث العلمي والنشر والترجمة
-                </div>
-                <div class="text-center">
-                    <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" style="width: 85px; height: 85px; object-fit: contain;">
-                </div>
-                <div class="text-end small fw-bold">
-                    المؤتمر العلمي الاول لجامعة البطانة<br>
-                    دور البحث العلمي في التنمية المستدامة واعادة الاعمار<br>
-                    اللجنة العلمية للمؤتمر
+            <div class="border-bottom border-2 border-dark pb-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center">
+                        <img src="{% static 'img/logo.png' %}" alt="جامعة البطانة" class="header-logo">
+                        <div class="small fw-bold mt-1">جامعة البطانة</div>
+                    </div>
+                    <div class="text-center px-2">
+                        <div class="small fw-bold text-muted">جمهورية السودان - وزارة التعليم العالي والبحث العلمي</div>
+                        <h5 class="fw-bold text-dark mb-1">المؤتمر العلمي الاول لجامعة البطانة</h5>
+                        <h6 class="fw-bold text-primary mb-1">العنوان: البحث العلمي والابتكار لاعادة الاعمار وتحقيق التنمية المستدامة في السودان</h6>
+                        <div class="small fw-bold text-secondary">عمادة البحث العلمي والنشر والترجمة - اللجنة العلمية</div>
+                    </div>
+                    <div class="text-center">
+                        <img src="{% static 'img/conf_logo.png' %}" alt="شعار المؤتمر" class="header-logo" onerror="this.style.display='none'">
+                    </div>
                 </div>
             </div>
 
             <div class="text-center mb-4">
                 <span class="badge bg-success text-white px-4 py-2 fs-6 mb-2">المرحلة النهائية: اشعار قبول رسمي وتصريح مشاركة</span>
                 <h4 class="fw-bold text-dark mb-1">بطاقة دخول المؤتمر وجلسات تقديم الابحاث</h4>
-                <div class="text-muted small fw-bold mb-1">البحث العلمي والابتكار واعادة الاعمار وتحقيق التنمية المستدامة</div>
                 <small class="text-muted fw-bold">تاريخ انعقاد المؤتمر: 26 و 27 ديسمبر 2026م</small>
             </div>
 
@@ -83,7 +88,7 @@
                 </tr>
                 <tr>
                     <th class="table-light">الجامعة / المؤسسة</th>
-                    <td class="fw-bold text-primary">{{ submission.university }}</td>
+                    <td class="fw-bold text-primary fs-6">{{ submission.university }}</td>
                 </tr>
                 <tr>
                     <th class="table-light">الكلية والقسم الاكاديمي</th>
