@@ -14,28 +14,18 @@ from django.core.management import call_command
 from .models import ConferenceSubmission
 
 
-# -------------------------------------------------------------
-# التواريخ والمواعيد الرسمية للمؤتمر (نظام الاغلاق التلقائي)
-# -------------------------------------------------------------
-# اخر موعد لاستلام الملخصات: 15 اكتوبر 2026م الساعة 23:59
+# التواريخ الرسمية
 ABSTRACT_DEADLINE = datetime.datetime(2026, 10, 15, 23, 59, 59)
-
-# اخر موعد لتسليم الورقة الكاملة: 26 نوفمبر 2026م الساعة 23:59
 FULL_PAPER_DEADLINE = datetime.datetime(2026, 11, 26, 23, 59, 59)
 
-
 def is_abstract_submission_open():
-    """التحقق هل باب التقديم للملخصات ما زال مفتوحا"""
     return datetime.datetime.now() <= ABSTRACT_DEADLINE
 
 def is_full_paper_submission_open():
-    """التحقق هل باب تسليم الاوراق الكاملة ما زال مفتوحا"""
     return datetime.datetime.now() <= FULL_PAPER_DEADLINE
 
 
-# -------------------------------------------------------------
-# حواجز الحماية الامنية الصارمة
-# -------------------------------------------------------------
+# حواجز الحماية الامنية
 def editor_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -77,9 +67,7 @@ def role_based_redirect(request):
     return redirect('home')
 
 
-# -------------------------------------------------------------
-# بوابات الباحثين العامة
-# -------------------------------------------------------------
+# بوابات الباحثين
 def public_home(request):
     total_submissions = ConferenceSubmission.objects.count()
     accepted_submissions = ConferenceSubmission.objects.filter(status='accepted').count()
@@ -96,14 +84,21 @@ def public_home(request):
 
 
 def submit_paper(request):
-    # فحص موعد الاغلاق التلقائي
     if not is_abstract_submission_open():
         return render(request, 'submissions/submit.html', {'is_closed': True})
 
     if request.method == 'POST':
         author_name = request.POST.get('author_name', '').strip()
         academic_degree = request.POST.get('academic_degree')
-        university = request.POST.get('university', '').strip()
+        
+        # معالجة اختيار او كتابة الجامعة
+        selected_uni = request.POST.get('university_select', '').strip()
+        custom_uni = request.POST.get('university_custom', '').strip()
+        if selected_uni == 'other' and custom_uni:
+            university = custom_uni
+        else:
+            university = selected_uni
+
         faculty = request.POST.get('faculty', '').strip()
         department = request.POST.get('department', '').strip()
         email = request.POST.get('email', '').strip()
@@ -142,6 +137,7 @@ def submit_paper(request):
             return redirect('submit_paper')
 
     context = {
+        'standard_universities': ConferenceSubmission.STANDARD_UNIVERSITIES,
         'academic_domains': ConferenceSubmission.ACADEMIC_DOMAINS,
         'academic_degrees': ConferenceSubmission.ACADEMIC_DEGREES,
         'participation_types': ConferenceSubmission.PARTICIPATION_TYPES,
@@ -203,7 +199,6 @@ def reupload_file(request, tracking_code):
 
 
 def upload_full_paper(request, tracking_code):
-    """المرحلة الثانية: رفع الورقة العلمية الكاملة (مفتوح حتى 26 نوفمبر 2026م)"""
     submission = get_object_or_404(ConferenceSubmission, tracking_code=tracking_code)
 
     if not is_full_paper_submission_open():
@@ -248,9 +243,7 @@ def acceptance_pass(request, tracking_code):
     return render(request, 'submissions/acceptance_pass.html', {'submission': submission})
 
 
-# -------------------------------------------------------------
 # لوحة هيئة التحرير
-# -------------------------------------------------------------
 @editor_required
 def editor_portal(request):
     status_filter = request.GET.get('status', '')
@@ -349,9 +342,7 @@ def editor_final_decision(request, pk):
     return redirect('editor_portal')
 
 
-# -------------------------------------------------------------
 # لوحة اللجنة العلمية
-# -------------------------------------------------------------
 @scientific_required
 def scientific_portal(request):
     domain_filter = request.GET.get('domain', '')
