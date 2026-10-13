@@ -17,6 +17,18 @@ def validate_file_size(file):
 class ConferenceSubmission(models.Model):
     """جدول مشاركات المؤتمر العلمي الاول لجامعة البطانة"""
 
+    # قائمة الجامعات الافتراضية
+    STANDARD_UNIVERSITIES = [
+        ('جامعة البطانة', 'جامعة البطانة'),
+        ('جامعة الجزيرة', 'جامعة الجزيرة'),
+        ('جامعة القران الكريم وتاصيل العلوم', 'جامعة القران الكريم وتاصيل العلوم'),
+        ('جامعة المناقل للعلوم والتكنولوجيا', 'جامعة المناقل للعلوم والتكنولوجيا'),
+        ('جامعة الامام المهدي', 'جامعة الامام المهدي'),
+        ('جامعة بخت الرضا', 'جامعة بخت الرضا'),
+        ('جامعة سنار', 'جامعة سنار'),
+        ('other', 'جامعة اخرى / مؤسسة اكاديمية اخرى'),
+    ]
+
     ACADEMIC_DOMAINS = [
         ('track_1', 'المحور الاول: البحث العلمي ودوره في التنمية المستدامة واعادة الاعمار بعد الحرب'),
         ('track_2', 'المحور الثاني: التكنولوجيا والابتكار والتحول الرقمي ودورها في التنمية المستدامة واعادة الاعمار'),
@@ -57,7 +69,7 @@ class ConferenceSubmission(models.Model):
 
     tracking_code = models.CharField(max_length=50, unique=True, blank=True, verbose_name="كود تتبع الطلب")
 
-    # 1. بيانات الباحث (حقل الجامعة مفتوح لكافة الجامعات السودانية)
+    # 1. بيانات الباحث
     author_name = models.CharField(max_length=200, verbose_name="اسم الباحث كاملا")
     academic_degree = models.CharField(max_length=30, choices=ACADEMIC_DEGREES, default='researcher', verbose_name="الدرجة العلمية")
     university = models.CharField(max_length=250, verbose_name="الجامعة / المؤسسة الاكاديمية")
@@ -69,7 +81,7 @@ class ConferenceSubmission(models.Model):
     # 2. بيانات المشاركة
     conference_title = models.CharField(
         max_length=255, 
-        default="المؤتمر العلمي الاول لجامعة البطانة: دور البحث العلمي في التنمية المستدامة واعادة الاعمار", 
+        default="المؤتمر العلمي الاول لجامعة البطانة: البحث العلمي والابتكار لاعادة الاعمار وتحقيق التنمية المستدامة في السودان", 
         verbose_name="اسم المؤتمر"
     )
     academic_domain = models.CharField(max_length=30, choices=ACADEMIC_DOMAINS, default='track_1', verbose_name="المحور العلمي")
