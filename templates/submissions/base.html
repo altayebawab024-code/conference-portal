@@ -26,14 +26,14 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
         .navbar-logo {
-            width: 52px;
-            height: 52px;
+            width: 48px;
+            height: 48px;
             object-fit: contain;
             background-color: #ffffff;
             border-radius: 50%;
             padding: 2px;
             border: 2px solid #d4af37;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
         }
         .card-custom {
             border: none;
@@ -69,17 +69,19 @@
     <div class="ribbon-bar text-center">
         <div class="container">
             <span class="fw-bold">المؤتمر العلمي الاول لجامعة البطانة:</span> 
-            ملتقى الباحثين بالجامعات والمراكز البحثية السودانية ومؤسسات المجتمع والقطاعين العام والخاص
+            البحث العلمي والابتكار لاعادة الاعمار وتحقيق التنمية المستدامة في السودان
         </div>
     </div>
 
+    <!-- شريط الملاحة بالشعارين معاً في كل صفحات الموقع -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-main py-2">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-3" href="{% url 'home' %}">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
                 <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="navbar-logo">
-                <div>
+                <img src="{% static 'img/conf_logo.png' %}" alt="شعار المؤتمر" class="navbar-logo" onerror="this.style.display='none'">
+                <div class="me-1">
                     <div class="fw-bold fs-5 text-white lh-1">جامعة البطانة</div>
-                    <small class="text-warning fw-semibold" style="font-size: 0.75rem;">
+                    <small class="text-warning fw-semibold" style="font-size: 0.72rem;">
                         المؤتمر العلمي الاول - عمادة البحث العلمي والنشر والترجمة
                     </small>
                 </div>
@@ -141,10 +143,12 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- التذييل الرسمي بالشعارين معاً وبصمة الكلية -->
     <footer class="bg-dark text-white text-center py-4 mt-auto border-top border-warning">
         <div class="container">
             <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
                 <img src="{% static 'img/logo.png' %}" alt="جامعة البطانة" style="width: 25px; height: 25px; object-fit: contain;">
+                <img src="{% static 'img/conf_logo.png' %}" alt="شعار المؤتمر" style="width: 25px; height: 25px; object-fit: contain;" onerror="this.style.display='none'">
                 <span class="fw-bold">جمهورية السودان - جامعة البطانة - عمادة البحث العلمي والنشر والترجمة</span>
             </div>
             <p class="small text-muted mb-2">
@@ -161,4 +165,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+    </html>
