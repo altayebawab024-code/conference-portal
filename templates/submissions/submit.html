@@ -8,8 +8,12 @@
     
     <div class="card card-custom p-4 p-md-5">
         
+        <!-- ترويسة الاستمارة بالشعارين معاً -->
         <div class="text-center mb-4 pb-3 border-bottom">
-            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-2 shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 85px; height: 85px; object-fit: contain;">
+            <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 75px; height: 75px; object-fit: contain;">
+                <img src="{% static 'img/conf_logo.png' %}" alt="شعار المؤتمر" class="shadow-sm rounded-circle p-1 bg-white border border-2 border-warning" style="width: 75px; height: 75px; object-fit: contain;">
+            </div>
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 d-block mx-auto" style="width: fit-content;">المؤتمر العلمي الاول لجامعة البطانة</span>
             <h3 class="fw-bold text-primary mb-1">استمارة تقديم ورقة / ملخص بحثي</h3>
             <p class="text-muted small">عمادة البحث العلمي والنشر والترجمة - ملتقى جامعات قطاع الوسط وكافة الجامعات السودانية</p>
@@ -60,7 +64,7 @@
                             </select>
                         </div>
 
-                        <!-- مربع الادخال التلقائي الذي يظهر عند اختيار جامعة اخرى -->
+                        <!-- مربع الإدخال التلقائي للجامعات الأخرى -->
                         <div class="col-12" id="customUniBox" style="display: none;">
                             <div class="p-3 bg-white border border-2 border-danger rounded-3">
                                 <label class="form-label small fw-bold text-danger">يرجى كتابة اسم جامعتك او مؤسستك الاكاديمية بدقة *</label>
