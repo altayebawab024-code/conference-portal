@@ -17,6 +17,16 @@
         font-weight: 800;
         color: #f1c40f;
     }
+    .hero-logo {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        background-color: #ffffff;
+        border-radius: 50%;
+        padding: 4px;
+        border: 2px solid #d4af37;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
 </style>
 {% endblock %}
 
@@ -29,15 +39,19 @@
         </div>
     {% endif %}
 
-    <!-- Hero Header الفاخر -->
+    <!-- صدر الصفحة بالشعارين معاً -->
     <div class="card card-custom p-5 mb-4 text-white text-center" style="background: linear-gradient(135deg, #091e3a 0%, #10375c 70%, #001f54 100%);">
         <div class="py-2">
-            <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="mb-3 rounded-circle p-1 bg-white shadow" style="width: 95px; height: 95px; object-fit: contain;">
-            <br>
+            
+            <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
+                <img src="{% static 'img/logo.png' %}" alt="شعار جامعة البطانة" class="hero-logo">
+                <img src="{% static 'img/conf_logo.png' %}" alt="شعار المؤتمر" class="hero-logo">
+            </div>
+
             <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-2 fs-6">جامعة البطانة - عمادة البحث العلمي والنشر والترجمة</span>
             <h1 class="display-6 fw-bold mb-2">المؤتمر العلمي الاول لجامعة البطانة</h1>
             <h4 class="text-warning fw-bold mb-2">دور البحث العلمي في التنمية المستدامة واعادة الاعمار</h4>
-            <h5 class="text-light fw-normal mb-3" style="font-size: 1.05rem;">البحث العلمي والابتكار واعادة الاعمار وتحقيق التنمية المستدامة</h5>
+            <h5 class="text-light fw-normal mb-3" style="font-size: 1.05rem;">البحث العلمي والابتكار لاعادة الاعمار وتحقيق التنمية المستدامة في السودان</h5>
             <p class="lead text-light fst-italic mb-4">"بالعلم نعيد البناء، وبالمعرفة نصنع المستقبل"</p>
 
             <!-- العداد التنازلي لموعد 15 اكتوبر 2026م -->
@@ -62,7 +76,7 @@
         </div>
     </div>
 
-    <!-- جدول التواريخ والمواعيد الرسمية المحدثة -->
+    <!-- جدول التواريخ والمواعيد الرسمية -->
     <div class="row g-3 mb-4 text-center">
         <div class="col-md-3">
             <div class="card card-custom p-3 border-bottom border-warning border-4 h-100">
@@ -189,7 +203,6 @@
 
 {% block extra_js %}
 <script>
-// كود تشغيل العداد التنازلي لموعد 15 اكتوبر 2026م
 function runCountdown() {
     const targetDate = new Date('October 15, 2026 23:59:59').getTime();
     const now = new Date().getTime();
